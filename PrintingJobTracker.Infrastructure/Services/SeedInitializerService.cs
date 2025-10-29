@@ -1,0 +1,132 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using PrintingJobTracker.Domain.Entities;
+using PrintingJobTracker.Infrastructure.Persistence;
+using PrintingJobTracker.Domain.Entities.Enums;
+
+namespace PrintingJobTracker.Infrastructure.Services
+{
+    public class SeedInitializerService(
+        ILogger<SeedInitializerService> logger,
+        DbContextFactoryService dbContextFactoryService)
+    {
+        private const int InitSeedFlag = 1;
+        private readonly ILogger<SeedInitializerService> _logger = logger;
+        private readonly DbContextFactoryService _dbContextFactoryService = dbContextFactoryService;
+
+        // Determines if the clients seed should run based on environment variable
+        private static bool ShouldSeedClients() =>
+            int.TryParse(Environment.GetEnvironmentVariable("INIT_SEED_CLIENTS") ?? "0", out int val) && val == InitSeedFlag;
+
+        // Determines if the jobs seed should run based on environment variable
+        private static bool ShouldSeedJobs() =>
+            int.TryParse(Environment.GetEnvironmentVariable("INIT_SEED_JOBS") ?? "0", out int val) && val == InitSeedFlag;
+
+        // Determines if the job status history seed should run based on environment variable
+        private static bool ShouldSeedJobStatus() =>
+            int.TryParse(Environment.GetEnvironmentVariable("INIT_SEED_JOBSTATUS") ?? "0", out int val) && val == InitSeedFlag;
+
+        // Seeds initial clients if none exist
+        public async Task SeedClientsAsync()
+        {
+            if (!ShouldSeedClients()) return;
+
+            using (var dbContext = _dbContextFactoryService.CreateDbContext<ApplicationDbContext>())
+            {
+                if (await dbContext.Clients.AnyAsync()) return;
+
+                _logger.LogInformation("Seeding 10 Clients...");
+                var clients = new List<Client>
+                {
+                    new() { Id = Guid.NewGuid(), FirstName = "John", LastName = "Doe", IdentityCard = "123456" },
+                    new() { Id = Guid.NewGuid(), FirstName = "Jane", LastName = "Smith", IdentityCard = "654321" },
+                    new() { Id = Guid.NewGuid(), FirstName = "Alice", LastName = "Johnson", IdentityCard = "987654" },
+                    new() { Id = Guid.NewGuid(), FirstName = "Michael", LastName = "Brown", IdentityCard = "112233" },
+                    new() { Id = Guid.NewGuid(), FirstName = "Emily", LastName = "Davis", IdentityCard = "445566" },
+                    new() { Id = Guid.NewGuid(), FirstName = "Daniel", LastName = "Miller", IdentityCard = "778899" },
+                    new() { Id = Guid.NewGuid(), FirstName = "Sophia", LastName = "Wilson", IdentityCard = "223344" },
+                    new() { Id = Guid.NewGuid(), FirstName = "William", LastName = "Moore", IdentityCard = "556677" },
+                    new() { Id = Guid.NewGuid(), FirstName = "Olivia", LastName = "Taylor", IdentityCard = "889900" },
+                    new() { Id = Guid.NewGuid(), FirstName = "James", LastName = "Anderson", IdentityCard = "334455" }
+                };
+
+                await dbContext.Clients.AddRangeAsync(clients);
+                await dbContext.SaveChangesAsync();
+            }
+        }
+
+        // Seeds initial jobs if none exist
+        public async Task SeedJobsAsync()
+        {
+            if (!ShouldSeedJobs()) return;
+
+            using (var dbContext = _dbContextFactoryService.CreateDbContext<ApplicationDbContext>())
+            {
+                if (await dbContext.Jobs.AnyAsync()) return;
+
+                _logger.LogInformation("Seeding 10 Jobs...");
+                var clients = await dbContext.Clients.Take(10).ToListAsync();
+                var jobs = new List<Job>
+                {
+                    new() { Id = Guid.NewGuid(), ClientId = clients[0].Id, JobName = "Print Brochure", Quantity = 100, Carrier = CarrierType.UPS, MailDeadline = DateTime.UtcNow.AddDays(5) },
+                    new() { Id = Guid.NewGuid(), ClientId = clients[1].Id, JobName = "Business Cards", Quantity = 250, Carrier = CarrierType.FedEx, MailDeadline = DateTime.UtcNow.AddDays(3) },
+                    new() { Id = Guid.NewGuid(), ClientId = clients[2].Id, JobName = "Flyers", Quantity = 500, Carrier = CarrierType.UPS, MailDeadline = DateTime.UtcNow.AddDays(7) },
+                    new() { Id = Guid.NewGuid(), ClientId = clients[3].Id, JobName = "Catalogs", Quantity = 150, Carrier = CarrierType.FedEx, MailDeadline = DateTime.UtcNow.AddDays(10) },
+                    new() { Id = Guid.NewGuid(), ClientId = clients[4].Id, JobName = "Letterheads", Quantity = 300, Carrier = CarrierType.UPS, MailDeadline = DateTime.UtcNow.AddDays(4) },
+                    new() { Id = Guid.NewGuid(), ClientId = clients[5].Id, JobName = "Envelopes", Quantity = 400, Carrier = CarrierType.FedEx, MailDeadline = DateTime.UtcNow.AddDays(6) },
+                    new() { Id = Guid.NewGuid(), ClientId = clients[6].Id, JobName = "Stickers", Quantity = 800, Carrier = CarrierType.UPS, MailDeadline = DateTime.UtcNow.AddDays(2) },
+                    new() { Id = Guid.NewGuid(), ClientId = clients[7].Id, JobName = "Posters", Quantity = 200, Carrier = CarrierType.FedEx, MailDeadline = DateTime.UtcNow.AddDays(8) },
+                    new() { Id = Guid.NewGuid(), ClientId = clients[8].Id, JobName = "Notepads", Quantity = 150, Carrier = CarrierType.UPS, MailDeadline = DateTime.UtcNow.AddDays(5) },
+                    new() { Id = Guid.NewGuid(), ClientId = clients[9].Id, JobName = "Calendars", Quantity = 100, Carrier = CarrierType.FedEx, MailDeadline = DateTime.UtcNow.AddDays(9) }
+                };
+
+                await dbContext.Jobs.AddRangeAsync(jobs);
+                await dbContext.SaveChangesAsync();
+            }
+        }
+
+        // Seeds initial job status history if none exist
+        public async Task SeedJobStatusHistoryAsync()
+        {
+            if (!ShouldSeedJobStatus()) return;
+
+            using (var dbContext = _dbContextFactoryService.CreateDbContext<ApplicationDbContext>())
+            {
+                if (await dbContext.JobStatusHistories.AnyAsync())
+                {
+                    return;
+                }
+
+                _logger.LogInformation("Seeding 10 JobStatusHistory entries...");
+                var jobs = await dbContext.Jobs.Take(10).ToListAsync();
+                var histories = new List<JobStatusHistory>();
+
+                foreach (var job in jobs)
+                {
+                    histories.Add(new JobStatusHistory
+                    {
+                        Id = Guid.NewGuid(),
+                        JobId = job.Id,
+                        Status = JobStatus.Received,
+                        ChangedAt = DateTime.UtcNow
+                    });
+                }
+
+                await dbContext.JobStatusHistories.AddRangeAsync(histories);
+                await dbContext.SaveChangesAsync();
+            }
+        }
+
+        // Runs all seeds sequentially
+        public async Task SeedAllAsync()
+        {
+            _logger.LogInformation("Starting full seed process...");
+
+            await SeedClientsAsync();
+            await SeedJobsAsync();
+            await SeedJobStatusHistoryAsync();
+
+            _logger.LogInformation("Seeding completed.");
+        }
+    }
+}

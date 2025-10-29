@@ -1,17 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PrintingJobTracker.Domain.Entities;
-using PrintingJobTracker.Infrastructure.Services;
 
 namespace PrintingJobTracker.Infrastructure.Persistence
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext(
+        DbContextOptions<ApplicationDbContext> options,
+        SqlConnectionPoolService<ApplicationDbContext> connectionPoolService) : DbContext(options)
     {
-        private readonly SqlConnectionPoolService<ApplicationDbContext> _connectionPoolService;
-
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, SqlConnectionPoolService<ApplicationDbContext> connectionPoolService) : base(options)
-        {
-            _connectionPoolService = connectionPoolService;
-        }
+        private readonly SqlConnectionPoolService<ApplicationDbContext> _connectionPoolService = connectionPoolService;
 
         public override void Dispose()
         {
@@ -30,8 +26,9 @@ namespace PrintingJobTracker.Infrastructure.Persistence
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
         }
 
-        public DbSet<Job>? Jobs { get; set; }
-        public DbSet<JobStatusHistory>? JobStatusHistories { get; set; }
-        public DbSet<AuditLog>? AuditLogs { get; set; }
+        public DbSet<Job> Jobs { get; set; }
+        public DbSet<JobStatusHistory> JobStatusHistories { get; set; }
+        public DbSet<AuditLog> AuditLogs { get; set; }
+        public DbSet<Client> Clients { get; set; }
     }
 }

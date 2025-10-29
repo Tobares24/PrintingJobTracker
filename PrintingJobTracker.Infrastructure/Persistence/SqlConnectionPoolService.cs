@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Concurrent;
 using System.Data.Common;
 
-namespace PrintingJobTracker.Infrastructure.Services
+namespace PrintingJobTracker.Infrastructure.Persistence
 {
     public class SqlConnectionPoolService<TContext> where TContext : DbContext
     {

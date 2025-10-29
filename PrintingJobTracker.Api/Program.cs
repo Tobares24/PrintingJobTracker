@@ -1,6 +1,7 @@
 using PrintingJobTracker.Api.Data;
 using PrintingJobTracker.Api.Extensions;
 using PrintingJobTracker.Infrastructure;
+using PrintingJobTracker.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,5 +33,11 @@ app.UseRouting();
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
+
+_ = Task.Run(async () =>
+{
+    var service = app.Services.GetRequiredService<SeedInitializerService>();
+    await service.SeedAllAsync();
+});
 
 app.Run();

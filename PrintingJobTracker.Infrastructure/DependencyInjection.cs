@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PrintingJobTracker.Infrastructure.Persistence;
-using PrintingJobTracker.Infrastructure.Services;
 using System.Data.Common;
 
 namespace PrintingJobTracker.Infrastructure
