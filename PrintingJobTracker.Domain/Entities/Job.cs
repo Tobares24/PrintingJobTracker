@@ -22,6 +22,8 @@ namespace PrintingJobTracker.Domain.Entities
 
         public DateTime MailDeadline { get; set; }
 
+        public bool IsDeleted { get; set; }
+
         public virtual ICollection<JobStatusHistory>? StatusHistory { get; set; } = new List<JobStatusHistory>();
     }
 }
