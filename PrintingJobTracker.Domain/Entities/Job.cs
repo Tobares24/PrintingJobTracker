@@ -4,11 +4,13 @@ namespace PrintingJobTracker.Domain.Entities
 {
     public class Job
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
-        public string ClientName { get; set; } = string.Empty;
+        public Guid ClientId { get; set; }
 
-        public string JobName { get; set; } = string.Empty;
+        public virtual Client? Client { get; set; }
+
+        public string? JobName { get; set; }
 
         public int Quantity { get; set; }
 
@@ -18,8 +20,8 @@ namespace PrintingJobTracker.Domain.Entities
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public DateTime SLA_MailBy { get; set; }
+        public DateTime MailDeadline { get; set; }
 
-        public virtual ICollection<JobStatusHistory> StatusHistory { get; set; } = new List<JobStatusHistory>();
+        public virtual ICollection<JobStatusHistory>? StatusHistory { get; set; } = new List<JobStatusHistory>();
     }
 }
