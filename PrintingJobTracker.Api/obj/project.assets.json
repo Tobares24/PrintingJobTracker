@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\steve\\source\\repos\\PrintingJobTracker\\PrintingJobTracker\\PrintingJobTracker.Api\\PrintingJobTracker.Api.csproj",
+      "projectUniqueName": "C:\\Users\\steve\\source\\repos\\PrintingJobTracker\\PrintingJobTracker.Api\\PrintingJobTracker.Api.csproj",
       "projectName": "PrintingJobTracker.Api",
-      "projectPath": "C:\\Users\\steve\\source\\repos\\PrintingJobTracker\\PrintingJobTracker\\PrintingJobTracker.Api\\PrintingJobTracker.Api.csproj",
+      "projectPath": "C:\\Users\\steve\\source\\repos\\PrintingJobTracker\\PrintingJobTracker.Api\\PrintingJobTracker.Api.csproj",
       "packagesPath": "C:\\Users\\steve\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\steve\\source\\repos\\PrintingJobTracker\\PrintingJobTracker\\PrintingJobTracker.Api\\obj\\",
+      "outputPath": "C:\\Users\\steve\\source\\repos\\PrintingJobTracker\\PrintingJobTracker.Api\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

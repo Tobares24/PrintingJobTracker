@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\steve\\source\\repos\\PrintingJobTracker\\PrintingJobTracker\\PrintingJobTracker.Infrastructure\\PrintingJobTracker.Infrastructure.csproj": {}
+    "C:\\Users\\steve\\source\\repos\\PrintingJobTracker\\PrintingJobTracker.Infrastructure\\PrintingJobTracker.Infrastructure.csproj": {}
   },
   "projects": {
-    "C:\\Users\\steve\\source\\repos\\PrintingJobTracker\\PrintingJobTracker\\PrintingJobTracker.Infrastructure\\PrintingJobTracker.Infrastructure.csproj": {
+    "C:\\Users\\steve\\source\\repos\\PrintingJobTracker\\PrintingJobTracker.Infrastructure\\PrintingJobTracker.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\steve\\source\\repos\\PrintingJobTracker\\PrintingJobTracker\\PrintingJobTracker.Infrastructure\\PrintingJobTracker.Infrastructure.csproj",
+        "projectUniqueName": "C:\\Users\\steve\\source\\repos\\PrintingJobTracker\\PrintingJobTracker.Infrastructure\\PrintingJobTracker.Infrastructure.csproj",
         "projectName": "PrintingJobTracker.Infrastructure",
-        "projectPath": "C:\\Users\\steve\\source\\repos\\PrintingJobTracker\\PrintingJobTracker\\PrintingJobTracker.Infrastructure\\PrintingJobTracker.Infrastructure.csproj",
+        "projectPath": "C:\\Users\\steve\\source\\repos\\PrintingJobTracker\\PrintingJobTracker.Infrastructure\\PrintingJobTracker.Infrastructure.csproj",
         "packagesPath": "C:\\Users\\steve\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\steve\\source\\repos\\PrintingJobTracker\\PrintingJobTracker\\PrintingJobTracker.Infrastructure\\obj\\",
+        "outputPath": "C:\\Users\\steve\\source\\repos\\PrintingJobTracker\\PrintingJobTracker.Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -49,6 +49,22 @@
       "frameworks": {
         "net6.0": {
           "targetAlias": "net6.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[6.0.36, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[6.0.36, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[9.0.10, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
