@@ -14,7 +14,9 @@
       "launchBrowser": true,
       "applicationUrl": "https://localhost:7152;http://localhost:5249",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "SQL_SERVER_CONNECTION_STRING": "Server=localhost;Database=PrintingJobTracker;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True",
+        "TAMANO_SQL_POOL": "10"
       }
     },
     "IIS Express": {
