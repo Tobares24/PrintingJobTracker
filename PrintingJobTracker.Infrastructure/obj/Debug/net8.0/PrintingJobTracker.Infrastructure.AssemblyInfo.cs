@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PrintingJobTracker.Infrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1f5b12d0d00dfab661cff2ceb0f688c82749207d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+94d9400998f6b0091947d26d271a34400da08885")]
 [assembly: System.Reflection.AssemblyProductAttribute("PrintingJobTracker.Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PrintingJobTracker.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
