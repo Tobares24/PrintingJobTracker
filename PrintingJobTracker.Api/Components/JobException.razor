@@ -1,0 +1,168 @@
+﻿@page "/jobs/{JobId:int}/exception"
+@using PrintingJobTracker.Application.Interfaces
+@using PrintingJobTracker.Domain.Entities
+@using PrintingJobTracker.Domain.Entities.Enums
+@inject IJobService JobService
+@inject NavigationManager Navigation
+@inject ILogger<JobException> Logger
+
+<Spinner IsVisible="@isLoading" DisplayText="@spinnerText" SpinnerColor="text-primary" Size="3rem" />
+
+<div class="container py-4">
+    <Alert @ref="alertComponent" />
+
+    @if (!isLoading)
+    {
+        <div class="mb-4">
+            <h3>
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                Set Job Exception: @jobName
+            </h3>
+            <button class="btn btn-secondary mt-2 me-2" @onclick="GoBack">
+                <i class="bi bi-arrow-left me-2"></i>Back to Job Details
+            </button>
+        </div>
+
+        <div class="card shadow-sm p-3 mb-4">
+            <h5>Job Information</h5>
+            <p><strong>Job ID:</strong> @JobId</p>
+            <p><strong>Job Name:</strong> @jobName</p>
+            <p>
+                <strong>Current Status:</strong>
+                <span class="badge @GetStatusBadgeClass(jobStatus)">
+                    @jobStatus
+                </span>
+            </p>
+        </div>
+
+        @if (jobStatus != JobStatus.Exception)
+        {
+            <div class="mb-3">
+                <label for="note" class="form-label">Exception Note</label>
+                <textarea id="note"
+                          class="form-control"
+                          rows="3"
+                          @bind="note"
+                          style="resize: vertical; min-height: 100px; max-height: 200px;"></textarea>
+            </div>
+
+            <button class="btn btn-danger" @onclick="SetExceptionAsync" disabled="@isProcessing">
+                <i class="bi bi-exclamation-triangle me-2"></i>Mark as Exception
+            </button>
+        }
+        else
+        {
+            <Alert Type="AlertType.Warning" Message="This job is already marked as Exception." />
+        }
+    }
+</div>
+
+@code {
+    [Parameter] public int JobId { get; set; }
+
+    private string jobName = string.Empty;
+    private JobStatus jobStatus;
+    private string note = string.Empty;
+    private bool isLoading = true;
+    private bool isProcessing = false;
+    private string spinnerText = "Loading job...";
+    private Alert? alertComponent;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadJobAsync();
+    }
+
+    private async Task LoadJobAsync()
+    {
+        try
+        {
+            isLoading = true;
+
+            var job = await JobService.GetByIdAsync(Guid.NewGuid().ToString(), JobId);
+            if (job is null)
+            {
+                NotFound();
+                return;
+            }
+
+            jobName = job.JobName ?? $"Job #{JobId}";
+            jobStatus = job.CurrentStatus;
+        }
+        catch (Exception ex)
+        {
+            await alertComponent!.ShowAlert("An error occurred while loading job details. Please try again later.", AlertType.Danger);
+            Logger.LogError(ex, "Error loading job for JobId {JobId}", JobId);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void NotFound()
+    {
+        Navigation.NavigateTo("/notfound");
+    }
+
+    private async Task SetExceptionAsync()
+    {
+        if (string.IsNullOrWhiteSpace(note))
+        {
+            await alertComponent!.ShowAlert("Please provide a note for the exception.", AlertType.Warning);
+            return;
+        }
+
+        try
+        {
+            isProcessing = true;
+
+            bool result = await JobService.SetJobExceptionAsync(Guid.NewGuid().ToString(), JobId, note);
+            if (result)
+            {
+                jobStatus = JobStatus.Exception;
+                await alertComponent!.ShowAlert("Job marked as Exception successfully.", AlertType.Success);
+            }
+            else
+            {
+                await alertComponent!.ShowAlert("Unable to set job to Exception. It may already be marked as Exception.", AlertType.Warning);
+            }
+        }
+        catch (Exception ex)
+        {
+            await alertComponent!.ShowAlert("An error occurred while setting job to Exception.", AlertType.Danger);
+            Logger.LogError(ex, "Error setting job exception for JobId {JobId}", JobId);
+        }
+        finally
+        {
+            isProcessing = false;
+        }
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo($"/jobs/{JobId}");
+    }
+
+    private static class AlertType
+    {
+        public const string Success = "success";
+        public const string Danger = "danger";
+        public const string Warning = "warning";
+        public const string Info = "info";
+    }
+
+    private string GetStatusBadgeClass(JobStatus status)
+    {
+        return status switch
+        {
+            JobStatus.Received => "bg-info",
+            JobStatus.Printing => "bg-primary",
+            JobStatus.Inserting => "bg-warning text-dark",
+            JobStatus.Mailed => "bg-success",
+            JobStatus.Delivered => "bg-dark",
+            JobStatus.Exception => "bg-danger",
+            _ => "bg-secondary"
+        };
+    }
+}
