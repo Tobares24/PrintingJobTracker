@@ -5,6 +5,7 @@ using PrintingJobTracker.Application.Hubs;
 using PrintingJobTracker.Application.Interfaces;
 using PrintingJobTracker.Application.Specifications;
 using PrintingJobTracker.Domain.Entities;
+using PrintingJobTracker.Domain.Entities.Enums;
 using PrintingJobTracker.Infrastructure.Repository.Jobs;
 
 namespace PrintingJobTracker.Application.Services
@@ -16,7 +17,39 @@ namespace PrintingJobTracker.Application.Services
         private readonly ILogger<JobService> _logger = logger;
         private readonly IJobRepository _jobRepository = jobRepository;
 
-        public async Task<List<Job>> GetJobsAsync(string traceId, JobFilterRequest request, CancellationToken cancellationToken = default)
+        public async Task AddJobAsync(string traceId, CreateJobRequest request, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                Job job = new()
+                {
+                    Id = Guid.NewGuid(),
+                    ClientId = request.ClientId,
+                    JobName = request.JobName,
+                    Quantity = request.Quantity,
+                    Carrier = request.Carrier,
+                    MailDeadline = request.MailDeadline,
+                    CreatedAt = DateTime.UtcNow,
+                    CurrentStatus = JobStatus.Received,
+                    IsDeleted = false
+                };
+
+                _logger.LogInformation("{TraceId} - Adding job through service: {JobId}", traceId, job.Id);
+
+                await _jobRepository.AddAsync(traceId, job, cancellationToken);
+
+                await NotifyAsync("JobCreated", job);
+
+                _logger.LogInformation("{TraceId} - Job added successfully: {JobId}", traceId, job.Id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{TraceId} - Error adding job in service: {Message}", traceId, ex.Message);
+                throw;
+            }
+        }
+
+        public async Task<List<JobResponse>> GetJobsAsync(string traceId, JobFilterRequest request, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -37,7 +70,15 @@ namespace PrintingJobTracker.Application.Services
 
                 var jobs = await _jobRepository.GetJobsAsync(traceId, specification, cancellationToken);
 
-                return jobs;
+                return jobs.Select(job => new JobResponse(
+                    job.Id,
+                    $"{job.Client?.FirstName ?? string.Empty} {job.Client?.LastName ?? string.Empty} {job.Client?.SecondLastName}?? string.Empty",
+                    job.JobName ?? string.Empty,
+                    job.Quantity,
+                    job.Carrier.ToString(),
+                    job.CurrentStatus.ToString(),
+                    job.CreatedAt
+                )).ToList();
             }
             catch (Exception ex)
             {
@@ -61,38 +102,9 @@ namespace PrintingJobTracker.Application.Services
             }
         }
 
-        public async Task<bool> ExistsAsync(string traceId, Guid jobId, CancellationToken cancellationToken = default)
+        public Task<bool> ExistsAsync(string traceId, Guid jobId, CancellationToken cancellationToken = default)
         {
-            try
-            {
-                _logger.LogInformation("{TraceId} - Checking job existence through service", traceId);
-
-                return await _jobRepository.ExistsAsync(traceId, jobId, cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "{TraceId} - Error checking job existence in service: {Message}", traceId, ex.Message);
-                throw;
-            }
-        }
-
-        public async Task AddJobAsync(string traceId, Job job, CancellationToken cancellationToken = default)
-        {
-            try
-            {
-                _logger.LogInformation("{TraceId} - Adding job through service: {JobId}", traceId, job.Id);
-
-                await _jobRepository.AddAsync(traceId, job, cancellationToken);
-
-                await NotifyAsync("JobAdded", job);
-
-                _logger.LogInformation("{TraceId} - Job added successfully: {JobId}", traceId, job.Id);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "{TraceId} - Error adding job in service: {Message}", traceId, ex.Message);
-                throw;
-            }
+            throw new NotImplementedException();
         }
     }
 }
