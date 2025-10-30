@@ -4,9 +4,9 @@ namespace PrintingJobTracker.Domain.Entities
 {
     public class Job
     {
-        public Guid Id { get; set; }
+        public int Id { get; private set; }
 
-        public Guid ClientId { get; set; }
+        public int ClientId { get; set; }
 
         public virtual Client? Client { get; set; }
 

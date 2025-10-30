@@ -35,10 +35,10 @@ namespace PrintingJobTracker.Infrastructure.Repository.Clients
 
                     var clients = await query
                         .OrderBy(c => c.FirstName)
+                            .ThenBy(c => c.Id)
                             .ThenBy(c => c.LastName)
                             .ThenBy(c => c.SecondLastName)
                         .Take(10)
-                        .Select(c => new Client { Id = c.Id, FirstName = c.FirstName })
                         .ToListAsync(cancellationToken);
 
                     return clients;
@@ -56,7 +56,7 @@ namespace PrintingJobTracker.Infrastructure.Repository.Clients
             }
         }
 
-        public async Task<bool> ExistsAsync(string traceId, Guid clientId, CancellationToken cancellationToken = default)
+        public async Task<bool> ExistsAsync(string traceId, int clientId, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -85,7 +85,7 @@ namespace PrintingJobTracker.Infrastructure.Repository.Clients
             }
         }
 
-        public async Task<Client?> GetByIdAsync(string traceId, Guid clientId, CancellationToken cancellationToken = default)
+        public async Task<Client?> GetByIdAsync(string traceId, int clientId, CancellationToken cancellationToken = default)
         {
             try
             {

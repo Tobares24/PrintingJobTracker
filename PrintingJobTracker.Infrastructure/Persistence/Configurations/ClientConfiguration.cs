@@ -16,6 +16,7 @@ namespace PrintingJobTracker.Infrastructure.Persistence.Configurations
                    .HasName("PK_Clients");
 
             builder.Property(c => c.Id)
+                   .ValueGeneratedOnAdd()
                    .HasComment("Unique identifier for the client.");
 
             builder.Property(c => c.IdentityCard)

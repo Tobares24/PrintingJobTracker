@@ -1,8 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PrintingJobTracker.Infrastructure.Persistence;
-using System.Data.Common;
+using PrintingJobTracker.Infrastructure.Repository.Clients;
+using PrintingJobTracker.Infrastructure.Repository.Jobs;
+using PrintingJobTracker.Infrastructure.Services;
 
 namespace PrintingJobTracker.Infrastructure
 {
@@ -10,28 +13,17 @@ namespace PrintingJobTracker.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSingleton<SqlConnectionPoolService<ApplicationDbContext>>(serviceProvider =>
-            {
-                int poolSize = int.Parse(Environment.GetEnvironmentVariable("TAMANO_SQL_POOL") ?? "10");
-
-                string connectionStringCnb = Environment.GetEnvironmentVariable("SQL_SERVER_CONNECTION_STRING")
-                    ?? "Server=localhost;Database=PrintingJobTracker;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True";
-
-                return new SqlConnectionPoolService<ApplicationDbContext>(poolSize, connectionStringCnb);
-            });
+            services.AddSingleton<DbContextFactoryService>();
+            services.AddSingleton<SeedInitializerService>();
+            services.AddScoped<IJobRepository, JobRepository>();
+            services.AddScoped<IClientRepository, ClientRepository>();
+            services.AddScoped<IJobStatusHistoryRepository, JobStatusHistoryRepository>();
 
             services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
             {
-                SqlConnectionPoolService<ApplicationDbContext> connectionPool = serviceProvider.GetRequiredService<SqlConnectionPoolService<ApplicationDbContext>>();
-                DbConnection? connection = connectionPool.GetConnectionAsync().GetAwaiter().GetResult();
-                if (connection is not null)
-                {
-                    options.UseSqlServer(connection);
-                }
-                else
-                {
-                    throw new Exception("No se pudo obtener la conexión de base de datos");
-                }
+                SqlConnection sqlConnection = new();
+                sqlConnection.ConnectionString = Environment.GetEnvironmentVariable("SQL_SERVER_CONNECTION_STRING") ?? "Server=localhost;Database=PrintingJobTracker;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True";
+                options.UseSqlServer(sqlConnection);
             });
 
             return services;

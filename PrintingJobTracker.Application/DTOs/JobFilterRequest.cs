@@ -1,9 +1,10 @@
-﻿namespace PrintingJobTracker.Application.DTOs
+﻿using PrintingJobTracker.Domain.Entities.Enums;
+
+namespace PrintingJobTracker.Application.DTOs
 {
     public sealed record JobFilterRequest(
         string? JobName,
-        DateTime? MailDeadlineFrom,
-        DateTime? MailDeadlineTo,
+        JobStatus? Status,
         int Skip = 0,
         int Take = 10
     );

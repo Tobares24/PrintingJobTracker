@@ -10,7 +10,7 @@ namespace PrintingJobTracker.Infrastructure.Repository.Jobs
             CancellationToken cancellationToken = default);
 
         Task<IReadOnlyList<JobStatusHistory>> GetJobStatusHistoriesPaginatedAsync(
-            Guid jobId,
+            int jobId,
             int pageNumber,
             int pageSize,
             string traceId,

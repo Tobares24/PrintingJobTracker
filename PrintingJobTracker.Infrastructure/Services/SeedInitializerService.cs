@@ -38,16 +38,16 @@ namespace PrintingJobTracker.Infrastructure.Services
                 _logger.LogInformation("Seeding 10 Clients...");
                 var clients = new List<Client>
                 {
-                    new() { Id = Guid.NewGuid(), FirstName = "John", LastName = "Doe", IdentityCard = "123456" },
-                    new() { Id = Guid.NewGuid(), FirstName = "Jane", LastName = "Smith", IdentityCard = "654321" },
-                    new() { Id = Guid.NewGuid(), FirstName = "Alice", LastName = "Johnson", IdentityCard = "987654" },
-                    new() { Id = Guid.NewGuid(), FirstName = "Michael", LastName = "Brown", IdentityCard = "112233" },
-                    new() { Id = Guid.NewGuid(), FirstName = "Emily", LastName = "Davis", IdentityCard = "445566" },
-                    new() { Id = Guid.NewGuid(), FirstName = "Daniel", LastName = "Miller", IdentityCard = "778899" },
-                    new() { Id = Guid.NewGuid(), FirstName = "Sophia", LastName = "Wilson", IdentityCard = "223344" },
-                    new() { Id = Guid.NewGuid(), FirstName = "William", LastName = "Moore", IdentityCard = "556677" },
-                    new() { Id = Guid.NewGuid(), FirstName = "Olivia", LastName = "Taylor", IdentityCard = "889900" },
-                    new() { Id = Guid.NewGuid(), FirstName = "James", LastName = "Anderson", IdentityCard = "334455" }
+                    new() { FirstName = "John", LastName = "Doe", IdentityCard = "123456" },
+                    new() { FirstName = "Jane", LastName = "Smith", IdentityCard = "654321" },
+                    new() { FirstName = "Alice", LastName = "Johnson", IdentityCard = "987654" },
+                    new() { FirstName = "Michael", LastName = "Brown", IdentityCard = "112233" },
+                    new() { FirstName = "Emily", LastName = "Davis", IdentityCard = "445566" },
+                    new() { FirstName = "Daniel", LastName = "Miller", IdentityCard = "778899" },
+                    new() { FirstName = "Sophia", LastName = "Wilson", IdentityCard = "223344" },
+                    new() { FirstName = "William", LastName = "Moore", IdentityCard = "556677" },
+                    new() { FirstName = "Olivia", LastName = "Taylor", IdentityCard = "889900" },
+                    new() { FirstName = "James", LastName = "Anderson", IdentityCard = "334455" }
                 };
 
                 await dbContext.Clients.AddRangeAsync(clients);
@@ -68,16 +68,16 @@ namespace PrintingJobTracker.Infrastructure.Services
                 var clients = await dbContext.Clients.Take(10).ToListAsync();
                 var jobs = new List<Job>
                 {
-                    new() { Id = Guid.NewGuid(), ClientId = clients[0].Id, JobName = "Print Brochure", Quantity = 100, Carrier = CarrierType.UPS, MailDeadline = DateTime.UtcNow.AddDays(5) },
-                    new() { Id = Guid.NewGuid(), ClientId = clients[1].Id, JobName = "Business Cards", Quantity = 250, Carrier = CarrierType.FedEx, MailDeadline = DateTime.UtcNow.AddDays(3) },
-                    new() { Id = Guid.NewGuid(), ClientId = clients[2].Id, JobName = "Flyers", Quantity = 500, Carrier = CarrierType.UPS, MailDeadline = DateTime.UtcNow.AddDays(7) },
-                    new() { Id = Guid.NewGuid(), ClientId = clients[3].Id, JobName = "Catalogs", Quantity = 150, Carrier = CarrierType.FedEx, MailDeadline = DateTime.UtcNow.AddDays(10) },
-                    new() { Id = Guid.NewGuid(), ClientId = clients[4].Id, JobName = "Letterheads", Quantity = 300, Carrier = CarrierType.UPS, MailDeadline = DateTime.UtcNow.AddDays(4) },
-                    new() { Id = Guid.NewGuid(), ClientId = clients[5].Id, JobName = "Envelopes", Quantity = 400, Carrier = CarrierType.FedEx, MailDeadline = DateTime.UtcNow.AddDays(6) },
-                    new() { Id = Guid.NewGuid(), ClientId = clients[6].Id, JobName = "Stickers", Quantity = 800, Carrier = CarrierType.UPS, MailDeadline = DateTime.UtcNow.AddDays(2) },
-                    new() { Id = Guid.NewGuid(), ClientId = clients[7].Id, JobName = "Posters", Quantity = 200, Carrier = CarrierType.FedEx, MailDeadline = DateTime.UtcNow.AddDays(8) },
-                    new() { Id = Guid.NewGuid(), ClientId = clients[8].Id, JobName = "Notepads", Quantity = 150, Carrier = CarrierType.UPS, MailDeadline = DateTime.UtcNow.AddDays(5) },
-                    new() { Id = Guid.NewGuid(), ClientId = clients[9].Id, JobName = "Calendars", Quantity = 100, Carrier = CarrierType.FedEx, MailDeadline = DateTime.UtcNow.AddDays(9) }
+                    new() { ClientId = clients[0].Id, JobName = "Print Brochure", Quantity = 100, Carrier = CarrierType.UPS, MailDeadline = DateTime.UtcNow.AddDays(5) },
+                    new() { ClientId = clients[1].Id, JobName = "Business Cards", Quantity = 250, Carrier = CarrierType.FedEx, MailDeadline = DateTime.UtcNow.AddDays(3) },
+                    new() { ClientId = clients[2].Id, JobName = "Flyers", Quantity = 500, Carrier = CarrierType.UPS, MailDeadline = DateTime.UtcNow.AddDays(7) },
+                    new() { ClientId = clients[3].Id, JobName = "Catalogs", Quantity = 150, Carrier = CarrierType.FedEx, MailDeadline = DateTime.UtcNow.AddDays(10) },
+                    new() { ClientId = clients[4].Id, JobName = "Letterheads", Quantity = 300, Carrier = CarrierType.UPS, MailDeadline = DateTime.UtcNow.AddDays(4) },
+                    new() { ClientId = clients[5].Id, JobName = "Envelopes", Quantity = 400, Carrier = CarrierType.FedEx, MailDeadline = DateTime.UtcNow.AddDays(6) },
+                    new() { ClientId = clients[6].Id, JobName = "Stickers", Quantity = 800, Carrier = CarrierType.UPS, MailDeadline = DateTime.UtcNow.AddDays(2) },
+                    new() { ClientId = clients[7].Id, JobName = "Posters", Quantity = 200, Carrier = CarrierType.FedEx, MailDeadline = DateTime.UtcNow.AddDays(8) },
+                    new() { ClientId = clients[8].Id, JobName = "Notepads", Quantity = 150, Carrier = CarrierType.UPS, MailDeadline = DateTime.UtcNow.AddDays(5) },
+                    new() { ClientId = clients[9].Id, JobName = "Calendars", Quantity = 100, Carrier = CarrierType.FedEx, MailDeadline = DateTime.UtcNow.AddDays(9) }
                 };
 
                 await dbContext.Jobs.AddRangeAsync(jobs);
@@ -105,7 +105,6 @@ namespace PrintingJobTracker.Infrastructure.Services
                 {
                     histories.Add(new JobStatusHistory
                     {
-                        Id = Guid.NewGuid(),
                         JobId = job.Id,
                         Status = JobStatus.Received,
                         ChangedAt = DateTime.UtcNow

@@ -27,10 +27,12 @@ namespace PrintingJobTracker.Infrastructure.Repository.Jobs
                 using (var dbContext = _dbContextFactoryService.CreateDbContext<ApplicationDbContext>())
                 {
                     IQueryable<Job> query = dbContext.Jobs
+                      .Include(j => j.Client)
                       .AsNoTracking()
                       .Where(j => !j.IsDeleted)
-                      .OrderByDescending(j => j.MailDeadline)
-                        .ThenByDescending(j => j.CreatedAt)
+                      .OrderByDescending(j => j.CreatedAt)
+                        .ThenByDescending(j => j.Id)
+                        .ThenByDescending(j => j.MailDeadline)
                       .Skip(specification.Skip)
                       .Take(specification.Take);
 
@@ -55,7 +57,7 @@ namespace PrintingJobTracker.Infrastructure.Repository.Jobs
             }
         }
 
-        public async Task<bool> ExistsAsync(string traceId, Guid jobId, CancellationToken cancellationToken = default)
+        public async Task<bool> ExistsAsync(string traceId, int jobId, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -84,7 +86,7 @@ namespace PrintingJobTracker.Infrastructure.Repository.Jobs
             }
         }
 
-        public async Task<Job?> GetByIdAsync(string traceId, Guid jobId, CancellationToken cancellationToken = default)
+        public async Task<Job?> GetByIdAsync(string traceId, int jobId, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -129,6 +131,108 @@ namespace PrintingJobTracker.Infrastructure.Repository.Jobs
             catch (Exception ex)
             {
                 _logger.LogError(ex, "{TraceId} - Error adding job {JobId}: {Exception}", traceId, job.Id, ex.Message);
+                throw;
+            }
+        }
+
+        public async Task<int> GetCountAsync(string traceId, ISpecification<Job> specification, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                _logger.LogInformation("{TraceId} - Getting job count from repository", traceId);
+
+                using var dbContext = _dbContextFactoryService.CreateDbContext<ApplicationDbContext>();
+
+                var query = dbContext.Jobs.AsQueryable();
+
+                if (specification.Criteria is not null)
+                    query = query.Where(specification.Criteria);
+
+                return await query.CountAsync(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{TraceId} - Error getting job count: {Message}", traceId, ex.Message);
+                throw;
+            }
+        }
+
+        public async Task UpdateAsync(string traceId, Job job, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                _logger.LogInformation("{TraceId} - Updating job: {JobId}", traceId, job.Id);
+
+                using var dbContext = _dbContextFactoryService.CreateDbContext<ApplicationDbContext>();
+
+                dbContext.Jobs.Update(job);
+                await dbContext.SaveChangesAsync(cancellationToken);
+
+                _logger.LogInformation("{TraceId} - Job updated: {JobId}", traceId, job.Id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{TraceId} - Error updating job: {Message}", traceId, ex.Message);
+                throw;
+            }
+        }
+
+        public async Task AddHistoryAsync(string traceId, JobStatusHistory history, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                _logger.LogInformation("{TraceId} - Adding job history for job: {JobId}", traceId, history.JobId);
+
+                using var dbContext = _dbContextFactoryService.CreateDbContext<ApplicationDbContext>();
+
+                await dbContext.JobStatusHistories.AddAsync(history, cancellationToken);
+                await dbContext.SaveChangesAsync(cancellationToken);
+
+                _logger.LogInformation("{TraceId} - Job history added: {HistoryId}", traceId, history.Id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{TraceId} - Error adding job history: {Message}", traceId, ex.Message);
+                throw;
+            }
+        }
+
+        public async Task<List<JobStatusHistory>> GetJobHistoryAsync(string traceId, int jobId, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                _logger.LogInformation("{TraceId} - Fetching job history for: {JobId}", traceId, jobId);
+
+                using var dbContext = _dbContextFactoryService.CreateDbContext<ApplicationDbContext>();
+
+                return await dbContext.JobStatusHistories
+                    .Where(h => h.JobId == jobId)
+                    .OrderByDescending(h => h.ChangedAt)
+                    .ToListAsync(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{TraceId} - Error fetching job history: {Message}", traceId, ex.Message);
+                throw;
+            }
+        }
+
+        public async Task<Dictionary<string, int>> GetJobCountsByStatusAsync(string traceId, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                _logger.LogInformation("{TraceId} - Fetching job counts by status", traceId);
+
+                using var dbContext = _dbContextFactoryService.CreateDbContext<ApplicationDbContext>();
+
+                return await dbContext.Jobs
+                    .GroupBy(j => j.CurrentStatus)
+                    .Select(g => new { Status = g.Key.ToString(), Count = g.Count() })
+                    .ToDictionaryAsync(x => x.Status, x => x.Count, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{TraceId} - Error fetching job counts by status: {Message}", traceId, ex.Message);
                 throw;
             }
         }

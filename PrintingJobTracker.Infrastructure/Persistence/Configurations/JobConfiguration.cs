@@ -16,6 +16,7 @@ namespace PrintingJobTracker.Infrastructure.Persistence.Configurations
                    .HasName("PK_Jobs");
 
             builder.Property(j => j.Id)
+                   .ValueGeneratedOnAdd()
                    .HasComment("Unique identifier for the job.");
 
             builder.HasMany(j => j.StatusHistory)

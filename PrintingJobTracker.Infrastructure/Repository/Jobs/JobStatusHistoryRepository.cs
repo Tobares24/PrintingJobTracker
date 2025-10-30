@@ -14,7 +14,7 @@ namespace PrintingJobTracker.Infrastructure.Repository.Jobs
         private readonly DbContextFactoryService _dbContextFactoryService = dbContextFactoryService;
 
         public async Task<IReadOnlyList<JobStatusHistory>> GetJobStatusHistoriesPaginatedAsync(
-            Guid jobId,
+            int jobId,
             int pageNumber,
             int pageSize,
             string traceId,

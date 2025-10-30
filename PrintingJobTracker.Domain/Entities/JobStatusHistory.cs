@@ -4,10 +4,11 @@ namespace PrintingJobTracker.Domain.Entities
 {
     public class JobStatusHistory
     {
-        public Guid Id { get; set; }
+        public int Id { get; private set; }
 
-        public Guid JobId { get; set; }
-        public Job? Job { get; set; } 
+        public int JobId { get; set; }
+
+        public Job? Job { get; set; }
 
         public JobStatus Status { get; set; }
 
