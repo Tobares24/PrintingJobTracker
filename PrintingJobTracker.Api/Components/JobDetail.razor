@@ -77,9 +77,9 @@
                             <div class="col-md-6">
                                 <label class="text-muted small">Client Name</label>
                                 <p class="fw-semibold mb-3">
-                                    @if (job.Client != null)
+                                    @if (job.Client is not null)
                                     {
-                                        @($"{job.Client.FirstName} {job.Client.LastName} {job.Client.SecondLastName}".Trim())
+                                        @($"{job.Client.FirstName ?? string.Empty} {job.Client.LastName ?? string.Empty} {job.Client.SecondLastName ?? string.Empty}".Trim())
                                     }
                                     else
                                     {
@@ -105,7 +105,7 @@
                             <div class="col-md-6">
                                 <label class="text-muted small">Created At</label>
                                 <p class="fw-semibold mb-3">
-                                    <i class="bi bi-calendar-event me-1"></i>@job.CreatedAt.ToLocalTime().ToString("MMM dd, yyyy h:mm tt")
+                                    <i class="bi bi-calendar-event me-1"></i>@job.CreatedAt.ToLocalTime().ToString("MMM dd, yyyy h:mm")
                                 </p>
                             </div>
                         </div>
@@ -115,7 +115,7 @@
                                 <label class="text-muted small">Mail Deadline (SLA)</label>
                                 <p class="fw-semibold">
                                     <i class="bi bi-clock-history me-1"></i>
-                                    @job.MailDeadline.ToLocalTime().ToString("MMM dd, yyyy h:mm tt")
+                                    @job.MailDeadline.ToLocalTime().ToString("MMM dd, yyyy h:mm")
                                     @if (IsDeadlineApproaching())
                                     {
                                         <span class="badge bg-warning ms-2">Deadline Approaching</span>
@@ -269,9 +269,9 @@
             Logger.LogInformation("Loading job details for JobId: {JobId}", JobId);
             job = await JobService.GetByIdAsync(traceId, JobId);
 
-            if (job == null)
+            if (job is null)
             {
-                errorMessage = $"Job with ID {JobId} was not found.";
+                NotFound();
                 Logger.LogWarning("Job not found: {JobId}", JobId);
             }
         }
@@ -288,7 +288,7 @@
 
     private async Task AdvanceStatusAsync()
     {
-        if (job == null || isProcessing) return;
+        if (job is null || isProcessing) return;
 
         try
         {
@@ -333,6 +333,11 @@
         Navigation.NavigateTo("/jobs");
     }
 
+    private void NotFound()
+    {
+        Navigation.NavigateTo("/notfound");
+    }
+
     private void ViewHistory()
     {
         Navigation.NavigateTo($"/jobs/{JobId}/history");
@@ -359,7 +364,7 @@
 
     private bool IsStatusCompleted(JobStatus status)
     {
-        if (job == null) return false;
+        if (job is null) return false;
         return GetStatusOrder(status) < GetStatusOrder(job.CurrentStatus);
     }
 
@@ -395,23 +400,25 @@
     {
         if (IsStatusCompleted(status))
             return "bg-success";
-        if (job != null && status == job.CurrentStatus)
+        if (job is not null && status == job.CurrentStatus)
             return GetStatusBadgeClass(status);
         return "bg-light text-dark";
     }
 
-    private string GetStatusIcon(JobStatus status)
+    private MarkupString GetStatusIcon(JobStatus status)
     {
-        return status switch
+        var iconClass = status switch
         {
-            JobStatus.Received => "📥",
-            JobStatus.Printing => "🖨️",
-            JobStatus.Inserting => "📄",
-            JobStatus.Mailed => "📬",
-            JobStatus.Delivered => "✅",
-            JobStatus.Exception => "⚠️",
-            _ => "📋"
+            JobStatus.Received => "fas fa-inbox",
+            JobStatus.Printing => "fas fa-print",
+            JobStatus.Inserting => "fas fa-file-alt",
+            JobStatus.Mailed => "fas fa-envelope",
+            JobStatus.Delivered => "fas fa-check-circle",
+            JobStatus.Exception => "fas fa-triangle-exclamation",
+            _ => "fas fa-clipboard"
         };
+
+        return (MarkupString)$"<i class='{iconClass} me-1'></i>";
     }
 
     private JobStatus GetNextStatus(JobStatus currentStatus)

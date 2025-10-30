@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using PrintingJobTracker.Application.DTOs;
-using PrintingJobTracker.Application.Hubs;
 using PrintingJobTracker.Application.Interfaces;
 using PrintingJobTracker.Application.Specifications;
 using PrintingJobTracker.Domain.Entities;
@@ -81,7 +79,7 @@ namespace PrintingJobTracker.Application.Services
                     job.JobName ?? string.Empty,
                     job.Quantity,
                     job.Carrier.ToString(),
-                    job.CurrentStatus.ToString(),
+                    job.CurrentStatus,
                     job.CreatedAt
                 )).ToList();
 
@@ -167,9 +165,15 @@ namespace PrintingJobTracker.Application.Services
                 _logger.LogInformation("{TraceId} - Setting job exception: {JobId}", traceId, jobId);
 
                 var job = await _jobRepository.GetByIdAsync(traceId, jobId, cancellationToken);
-                if (job == null)
+                if (job is null)
                 {
                     _logger.LogWarning("{TraceId} - Job not found: {JobId}", traceId, jobId);
+                    return false;
+                }
+
+                if (job.CurrentStatus == JobStatus.Exception)
+                {
+                    _logger.LogWarning("{TraceId} - Job is already in Exception status: {JobId}", traceId, jobId);
                     return false;
                 }
 

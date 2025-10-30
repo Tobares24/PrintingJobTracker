@@ -24,7 +24,6 @@
         <div class="col-md-4">
             <label class="form-label">Filter by Status:</label>
             <select class="form-select" @bind="selectedStatus" @bind:after="ResetAndLoadJobs">
-                <option value="">All Statuses</option>
                 <option value="@((int)JobStatus.Received)">Received</option>
                 <option value="@((int)JobStatus.Printing)">Printing</option>
                 <option value="@((int)JobStatus.Inserting)">Inserting</option>
@@ -86,11 +85,11 @@
                                 <span class="badge bg-secondary">@job.Carrier</span>
                             </td>
                             <td>
-                                <span class="badge @GetStatusBadgeClass(job.CurrentStatus.ToString())">
+                                <span class="badge @GetStatusBadgeClass(job.CurrentStatus)">
                                     @job.CurrentStatus
                                 </span>
                             </td>
-                            <td>@job.CreatedAt.ToString("MM/dd/yyyy")</td>
+                            <td>@job.CreatedAt.ToString("MM/dd/yyyy h:MM")</td>
                             <td>
                                 <button class="btn btn-sm btn-info" @onclick="() => ViewJobDetail(job.Id)">
                                     <i class="bi bi-eye"></i> View
@@ -379,16 +378,16 @@
         Navigation.NavigateTo($"/jobs/{jobId}");
     }
 
-    private string GetStatusBadgeClass(string status)
+    private string GetStatusBadgeClass(JobStatus status)
     {
         return status switch
         {
-            "Received" => "bg-info",
-            "Printing" => "bg-primary",
-            "Inserting" => "bg-warning text-dark",
-            "Mailed" => "bg-success",
-            "Delivered" => "bg-dark",
-            "Exception" => "bg-danger",
+            JobStatus.Received => "bg-info",
+            JobStatus.Printing => "bg-primary",
+            JobStatus.Inserting => "bg-warning text-dark",
+            JobStatus.Mailed => "bg-success",
+            JobStatus.Delivered => "bg-dark",
+            JobStatus.Exception => "bg-danger",
             _ => "bg-secondary"
         };
     }

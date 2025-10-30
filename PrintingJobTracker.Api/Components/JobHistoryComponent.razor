@@ -1,4 +1,4 @@
-﻿@page "/jobs/{JobId}/history"
+﻿@page "/jobs/{JobId:int}/history"
 @using PrintingJobTracker.Application.Interfaces
 @using PrintingJobTracker.Domain.Entities
 @using PrintingJobTracker.Domain.Entities.Enums
@@ -7,6 +7,7 @@
 @inject ILogger<JobHistoryComponent> Logger
 
 <Spinner IsVisible="@isLoading" DisplayText="@spinnerText" SpinnerColor="text-primary" Size="3rem" />
+<Alert @ref="alertComponent" />
 
 <div class="container py-4">
     @if (!string.IsNullOrEmpty(errorMessage))
@@ -48,8 +49,8 @@
                                         @item.Status.ToString()
                                     </span>
                                 </td>
-                                <td>@(string.IsNullOrEmpty(item.Note) ? "No note provided" : item.Note)</td>
-                                <td>@item.ChangedAt.ToLocalTime().ToString("MMM dd, yyyy h:mm tt")</td>
+                                <td>@(string.IsNullOrWhiteSpace(item.Note) ? "No note provided" : item.Note)</td>
+                                <td>@item.ChangedAt.ToLocalTime().ToString("MMM dd, yyyy")</td>
                             </tr>
                         }
                     </tbody>
@@ -68,6 +69,7 @@
 @code {
     [Parameter] public int JobId { get; set; }
 
+    private Alert? alertComponent;
     private List<JobStatusHistory>? history;
     private string jobName = string.Empty;
     private bool isLoading = true;
@@ -87,9 +89,9 @@
             errorMessage = null;
 
             var job = await JobService.GetByIdAsync(Guid.NewGuid().ToString(), JobId);
-            if (job == null)
+            if (job is null)
             {
-                errorMessage = $"Job with ID {JobId} was not found.";
+                NotFound();
                 return;
             }
 
@@ -99,12 +101,18 @@
         catch (Exception ex)
         {
             errorMessage = "An error occurred while loading job history. Please try again later.";
+            await alertComponent!.ShowAlert(errorMessage);
             Logger.LogError(ex, "Error loading job history for JobId {JobId}", JobId);
         }
         finally
         {
             isLoading = false;
         }
+    }
+
+    private void NotFound()
+    {
+        Navigation.NavigateTo("/notfound");
     }
 
     private void GoBack()

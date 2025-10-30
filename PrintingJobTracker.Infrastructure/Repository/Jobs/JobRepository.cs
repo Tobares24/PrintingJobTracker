@@ -97,6 +97,7 @@ namespace PrintingJobTracker.Infrastructure.Repository.Jobs
                 using (var dbContext = _dbContextFactoryService.CreateDbContext<ApplicationDbContext>())
                 {
                     job = await dbContext.Jobs
+                        .Include(j => j.Client)
                         .FirstOrDefaultAsync(j => j.Id == jobId && !j.IsDeleted, cancellationToken);
                 }
 

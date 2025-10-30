@@ -1,4 +1,6 @@
-﻿namespace PrintingJobTracker.Application.DTOs
+﻿using PrintingJobTracker.Domain.Entities.Enums;
+
+namespace PrintingJobTracker.Application.DTOs
 {
     public sealed record JobResponse(
          List<JobModel> Jobs,
@@ -11,7 +13,7 @@
        string JobName,
        int Quantity,
        string Carrier,
-       string CurrentStatus,
+       JobStatus CurrentStatus,
        DateTime CreatedAt
     );
 }
