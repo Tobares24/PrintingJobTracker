@@ -40,36 +40,36 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xDbGllbnRTZWxlY3Rvci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Components/JobDetail.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xKb2JEZXRhaWwucmF6b3I=
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Components/JobException.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xKb2JFeGNlcHRpb24ucmF6b3I=
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Components/JobHistoryComponent.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xKb2JIaXN0b3J5Q29tcG9uZW50LnJhem9y
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Components/NotFound.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xOb3RGb3VuZC5yYXpvcg==
-build_metadata.AdditionalFiles.CssScope = 
-
 [C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Components/Spinner.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTcGlubmVyLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Pages/Dashboard.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRGFzaGJvYXJkLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Pages/Index.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kZXgucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Pages/JobDetail.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSm9iRGV0YWlsLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Pages/JobException.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSm9iRXhjZXB0aW9uLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Pages/JobHistoryComponent.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSm9iSGlzdG9yeUNvbXBvbmVudC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Pages/Jobs.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSm9icy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Shared/Modal.razor]
-build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE1vZGFsLnJhem9y
+[C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Pages/NotFound.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTm90Rm91bmQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Shared/SurveyPrompt.razor]

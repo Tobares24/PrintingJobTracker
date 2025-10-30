@@ -1,22 +1,34 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@attribute [Authorize]
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">PrintingJobTracker.Api</a>
+        <a class="navbar-brand" href="">
+            <span class="brand-icon">📋</span> Job Tracker
+        </a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
     </div>
 </div>
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+<div class="collapse navbar-collapse @(collapseNavMenu ? "" : "show")">
     <nav class="flex-column">
-        @* <div class="nav-item px-3">
+        <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
+                <span class="oi oi-home me-2" aria-hidden="true"></span>
+                Home
             </NavLink>
-        </div> *@
+        </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="jobs">
-                <span class="oi oi-plus" aria-hidden="true"></span> Jobs
+                <span class="oi oi-briefcase me-2" aria-hidden="true"></span>
+                Jobs
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="dashboard">
+                <span class="oi oi-graph me-2" aria-hidden="true"></span>
+                Dashboard
             </NavLink>
         </div>
     </nav>
@@ -25,10 +37,70 @@
 @code {
     private bool collapseNavMenu = true;
 
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
     }
 }
+
+<style>
+    .top-row {
+        background-color: #FFA500 !important;
+        border-bottom: 3px solid #000000;
+    }
+
+    .navbar-brand {
+        color: #000000 !important;
+        font-weight: bold;
+        font-size: 1.3rem;
+        transition: color 0.3s ease;
+    }
+
+        .navbar-brand:hover {
+            color: #333333 !important;
+        }
+
+    .brand-icon {
+        font-size: 1.5rem;
+        margin-right: 0.5rem;
+    }
+
+    .navbar-toggler {
+        border-color: #000000;
+    }
+
+    .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(0, 0, 0, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    }
+
+    .nav-link {
+        color: #000000 !important;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        border-radius: 5px;
+        margin: 5px 0;
+    }
+
+        .nav-link:hover {
+            background-color: #FFB84D;
+            color: #000000 !important;
+            transform: translateX(5px);
+        }
+
+        .nav-link.active {
+            background-color: #000000;
+            color: #FFA500 !important;
+        }
+
+        .nav-link .oi {
+            color: #FFA500;
+        }
+
+        .nav-link:hover .oi {
+            color: #000000;
+        }
+
+        .nav-link.active .oi {
+            color: #FFA500;
+        }
+</style>

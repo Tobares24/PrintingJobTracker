@@ -1,0 +1,310 @@
+﻿@page "/dashboard"
+@using PrintingJobTracker.Application.Interfaces
+@using PrintingJobTracker.Application.DTOs
+@using PrintingJobTracker.Domain.Entities.Enums
+@using Microsoft.Extensions.Logging
+@inject IJobService JobService
+@inject ILogger<Dashboard> Logger
+@inject NavigationManager Navigation
+@attribute [Authorize]
+
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="h2 fw-bold">
+                <i class="bi bi-speedometer2"></i> Dashboard — Printing Job Tracker
+            </h1>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-primary" @onclick="RefreshData" disabled="@_isLoading">
+                @if (_isLoading)
+                {
+                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                }
+                <i class="bi bi-arrow-clockwise"></i> Actualizar
+            </button>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        @if (_statusCounts is not null && _statusCounts.Any())
+        {
+            @foreach (var status in _statusCounts)
+            {
+                <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+                    <div class="card h-100 @GetCardColorClass(status.Key)">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">@status.Key</h5>
+                            <p class="card-text display-6 fw-bold">@status.Value</p>
+                            <small class="text-muted">
+                                <i class="@GetStatusIcon(status.Key)"></i> Trabajos
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else if (_isLoadingCounts)
+        {
+            <div class="col-12 text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando conteos...</span>
+                </div>
+                <p class="mt-2">Cargando resumen de estados...</p>
+            </div>
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> No hay datos de estado disponibles
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+                <i class="bi bi-clock-history"></i> Últimos 10 Trabajos
+            </h5>
+        </div>
+        <div class="card-body">
+            @if (_isLoadingJobs)
+            {
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-2">Cargando trabajos...</p>
+                </div>
+            }
+            else if (_recentJobs != null && _recentJobs.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>JobId</th>
+                                <th>Cliente</th>
+                                <th>Nombre del Trabajo</th>
+                                <th>Cantidad</th>
+                                <th>Carrier</th>
+                                <th>Estado Actual</th>
+                                <th>Creado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var job in _recentJobs)
+                            {
+                                <tr>
+                                    <td>
+                                        <span class="badge bg-secondary">@job.Id</span>
+                                    </td>
+                                    <td>@(string.IsNullOrWhiteSpace(job.ClientName) ? "Sin cliente" : job.ClientName)</td>
+                                    <td>
+                                        <strong>@job.JobName</strong>
+                                    </td>
+                                    <td>@job.Quantity.ToString("N0")</td>
+                                    <td>@job.Carrier</td>
+                                    <td>
+                                        <span class="badge @GetStatusBadgeClass(job.CurrentStatus.ToString())">
+                                            @job.CurrentStatus
+                                        </span>
+                                    </td>
+                                    <td>@job.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> No hay trabajos recientes
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private bool _isLoading;
+    private bool _isLoadingCounts;
+    private bool _isLoadingJobs;
+    private Dictionary<string, int> _statusCounts = new();
+    private List<JobModel> _recentJobs = new();
+    private HashSet<int> _processingJobs = new();
+    private int? _showExceptionInput;
+    private string _exceptionNote = string.Empty;
+    private bool _isProcessingAction;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDataAsync();
+    }
+
+    private async Task RefreshData()
+    {
+        await LoadDataAsync();
+    }
+
+    private async Task LoadDataAsync()
+    {
+        _isLoading = true;
+        _isLoadingCounts = true;
+        _isLoadingJobs = true;
+        StateHasChanged();
+
+        var traceId = Guid.NewGuid().ToString();
+        try
+        {
+            try
+            {
+                var counts = await JobService.GetJobCountsByStatusAsync(traceId);
+                _statusCounts = counts ?? new Dictionary<string, int>();
+            }
+            catch (Exception exCounts)
+            {
+                Logger.LogError(exCounts, "Error al cargar conteos de trabajos. TraceId: {TraceId}", traceId);
+                _statusCounts = new Dictionary<string, int>();
+            }
+
+            try
+            {
+                var filter = new JobFilterRequest(null, null, 0, 10);
+                var jobsResponse = await JobService.GetJobsAsync(traceId, filter);
+                _recentJobs = jobsResponse?.Jobs?.ToList() ?? new List<JobModel>();
+            }
+            catch (Exception exJobs)
+            {
+                Logger.LogError(exJobs, "Error al cargar trabajos recientes. TraceId: {TraceId}", traceId);
+                _recentJobs = new List<JobModel>();
+            }
+        }
+        finally
+        {
+            _isLoading = false;
+            _isLoadingCounts = false;
+            _isLoadingJobs = false;
+            StateHasChanged();
+        }
+    }
+
+    private string GetCardColorClass(string status)
+    {
+        if (string.IsNullOrWhiteSpace(status)) return "border-secondary";
+        return status.ToLowerInvariant() switch
+        {
+            "received" => "border-primary",
+            "printing" => "border-warning",
+            "delivered" => "border-success",
+            "exception" => "border-danger",
+            _ => "border-secondary"
+        };
+    }
+
+    private string GetStatusIcon(string status)
+    {
+        if (string.IsNullOrWhiteSpace(status)) return "bi bi-briefcase";
+        return status.ToLowerInvariant() switch
+        {
+            "received" => "bi bi-inbox",
+            "printing" => "bi bi-printer",
+            "delivered" => "bi bi-truck",
+            "exception" => "bi bi-exclamation-triangle",
+            _ => "bi bi-collection"
+        };
+    }
+
+    private string GetStatusBadgeClass(string status)
+    {
+        if (string.IsNullOrWhiteSpace(status)) return "bg-secondary text-white";
+        return status.ToLowerInvariant() switch
+        {
+            "received" => "bg-primary text-white",
+            "printing" => "bg-warning text-dark",
+            "delivered" => "bg-success text-white",
+            "exception" => "bg-danger text-white",
+            _ => "bg-secondary text-white"
+        };
+    }
+
+    private bool IsActionDisabled(object currentStatus)
+    {
+        var s = currentStatus?.ToString() ?? string.Empty;
+        return string.Equals(s, "Delivered", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(s, "Exception", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private void NavigateToDetails(int jobId)
+    {
+        Navigation.NavigateTo($"/jobs/{jobId}");
+    }
+
+    private async Task AdvanceStatus(int jobId)
+    {
+        if (_processingJobs.Contains(jobId)) return;
+
+        _processingJobs.Add(jobId);
+        StateHasChanged();
+
+        var traceId = Guid.NewGuid().ToString();
+        try
+        {
+            await JobService.AdvanceJobStatusAsync(traceId, jobId);
+            // Refrescar datos para reflejar cambios
+            await LoadDataAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error al avanzar el estado del trabajo {JobId}. TraceId: {TraceId}", jobId, traceId);
+        }
+        finally
+        {
+            _processingJobs.Remove(jobId);
+            StateHasChanged();
+        }
+    }
+
+    private void ToggleExceptionInput(int jobId)
+    {
+        if (_showExceptionInput == jobId)
+        {
+            CancelExceptionInput();
+            return;
+        }
+
+        _showExceptionInput = jobId;
+        _exceptionNote = string.Empty;
+    }
+
+    private void CancelExceptionInput()
+    {
+        _showExceptionInput = null;
+        _exceptionNote = string.Empty;
+    }
+
+    private async Task SaveException(int jobId)
+    {
+        if (_isProcessingAction) return;
+
+        _isProcessingAction = true;
+        StateHasChanged();
+        var traceId = Guid.NewGuid().ToString();
+        try
+        {
+            await JobService.SetJobExceptionAsync(traceId, jobId, _exceptionNote ?? string.Empty);
+            await LoadDataAsync();
+            CancelExceptionInput();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error al marcar excepción para el trabajo {JobId}. TraceId: {TraceId}", jobId, traceId);
+        }
+        finally
+        {
+            _isProcessingAction = false;
+            StateHasChanged();
+        }
+    }
+}

@@ -5,24 +5,25 @@
 @using PrintingJobTracker.Domain.Entities.Enums
 @inject IJobService JobService
 @inject NavigationManager Navigation
+@attribute [Authorize]
 
 <Alert @ref="alertComponent" />
 
 <div class="container-fluid mt-4">
     <div class="row mb-3">
         <div class="col">
-            <h3>Printing Job Tracker</h3>
+            <h3 class="text-dark">Printing Job Tracker</h3>
         </div>
         <div class="col-auto">
-            <button class="btn btn-primary" @onclick="OpenCreateModal">
-                <i class="bi bi-plus-circle"></i> Create New Job
+            <button class="btn btn-warning text-dark" @onclick="OpenCreateModal">
+                <i class="bi bi-plus-circle me-1"></i> Create New Job
             </button>
         </div>
     </div>
 
     <div class="row mb-3">
         <div class="col-md-4">
-            <label class="form-label">Filter by Status:</label>
+            <label class="form-label text-dark">Filter by Status:</label>
             <select class="form-select" @bind="selectedStatus" @bind:after="ResetAndLoadJobs">
                 <option value="@((int)JobStatus.Received)">Received</option>
                 <option value="@((int)JobStatus.Printing)">Printing</option>
@@ -33,7 +34,7 @@
             </select>
         </div>
         <div class="col-md-3">
-            <label class="form-label">Jobs per page:</label>
+            <label class="form-label text-dark">Jobs per page:</label>
             <select class="form-select" @bind="pageSize" @bind:after="ResetAndLoadJobs">
                 <option value="10">10</option>
                 <option value="25">25</option>
@@ -46,14 +47,14 @@
     @if (isLoading)
     {
         <div class="text-center p-5">
-            <div class="spinner-border" role="status">
+            <div class="spinner-border text-warning" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
         </div>
     }
     else if (jobResponse is null || !jobResponse.Jobs.Any())
     {
-        <div class="alert alert-info">
+        <div class="alert alert-warning text-dark">
             No jobs found. Create your first job to get started!
         </div>
     }
@@ -82,7 +83,7 @@
                             <td>@job.JobName</td>
                             <td>@job.Quantity.ToString("N0")</td>
                             <td>
-                                <span class="badge bg-secondary">@job.Carrier</span>
+                                <span class="badge bg-dark text-warning">@job.Carrier</span>
                             </td>
                             <td>
                                 <span class="badge @GetStatusBadgeClass(job.CurrentStatus)">
@@ -91,8 +92,8 @@
                             </td>
                             <td>@job.CreatedAt.ToString("MM/dd/yyyy h:MM")</td>
                             <td>
-                                <button class="btn btn-sm btn-info" @onclick="() => ViewJobDetail(job.Id)">
-                                    <i class="bi bi-eye"></i> View
+                                <button class="btn btn-sm btn-warning text-dark" @onclick="() => ViewJobDetail(job.Id)">
+                                    <i class="bi bi-eye me-1"></i> View
                                 </button>
                             </td>
                         </tr>
@@ -103,7 +104,7 @@
 
         <div class="row mt-3">
             <div class="col-md-6">
-                <p class="text-muted">
+                <p class="text-dark">
                     Showing @((currentPage - 1) * pageSize + 1) to @Math.Min(currentPage * pageSize, jobResponse.TotalCount)
                     of @jobResponse.TotalCount jobs
                 </p>
@@ -112,12 +113,16 @@
                 <nav aria-label="Job pagination">
                     <ul class="pagination justify-content-end">
                         <li class="page-item @(currentPage == 1 ? "disabled" : "")">
-                            <button class="page-link" @onclick="() => GoToPage(1)" disabled="@(currentPage == 1)">
+                            <button class="page-link bg-warning text-dark border-dark"
+                                    @onclick="() => GoToPage(1)"
+                                    disabled="@(currentPage == 1)">
                                 First
                             </button>
                         </li>
                         <li class="page-item @(currentPage == 1 ? "disabled" : "")">
-                            <button class="page-link" @onclick="PreviousPage" disabled="@(currentPage == 1)">
+                            <button class="page-link bg-warning text-dark border-dark"
+                                    @onclick="PreviousPage"
+                                    disabled="@(currentPage == 1)">
                                 Previous
                             </button>
                         </li>
@@ -125,17 +130,24 @@
                         @for (int i = Math.Max(1, currentPage - 2); i <= Math.Min(totalPages, currentPage + 2); i++)
                         {
                             <li class="page-item @(currentPage == i ? "active" : "")">
-                                <button class="page-link" @onclick="() => GoToPage(i)">@i</button>
+                                <button class="page-link @(currentPage == i ? "bg-dark text-warning border-dark" : "bg-warning text-dark border-dark")"
+                                        @onclick="() => GoToPage(i)">
+                                    @i
+                                </button>
                             </li>
                         }
 
                         <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
-                            <button class="page-link" @onclick="NextPage" disabled="@(currentPage == totalPages)">
+                            <button class="page-link bg-warning text-dark border-dark"
+                                    @onclick="NextPage"
+                                    disabled="@(currentPage == totalPages)">
                                 Next
                             </button>
                         </li>
                         <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
-                            <button class="page-link" @onclick="() => GoToPage(totalPages)" disabled="@(currentPage == totalPages)">
+                            <button class="page-link bg-warning text-dark border-dark"
+                                    @onclick="() => GoToPage(totalPages)"
+                                    disabled="@(currentPage == totalPages)">
                                 Last
                             </button>
                         </li>
@@ -369,6 +381,7 @@
         };
 
         await JobService.AddJobAsync(Guid.NewGuid().ToString(), request);
+        await alertComponent!.ShowAlert("Job created successfully!", "success");
         CloseCreateModal();
         await ResetAndLoadJobs();
     }

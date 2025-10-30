@@ -27,19 +27,21 @@ namespace PrintingJobTracker.Infrastructure.Repository.Jobs
                 using (var dbContext = _dbContextFactoryService.CreateDbContext<ApplicationDbContext>())
                 {
                     IQueryable<Job> query = dbContext.Jobs
-                      .Include(j => j.Client)
-                      .AsNoTracking()
-                      .Where(j => !j.IsDeleted)
-                      .OrderByDescending(j => j.CreatedAt)
-                        .ThenByDescending(j => j.Id)
-                        .ThenByDescending(j => j.MailDeadline)
-                      .Skip(specification.Skip)
-                      .Take(specification.Take);
+                        .Include(j => j.Client)
+                        .AsNoTracking()
+                        .Where(j => !j.IsDeleted);
 
                     if (specification.Criteria is not null)
                     {
                         query = query.Where(specification.Criteria);
                     }
+
+                    query = query
+                        .OrderByDescending(j => j.CreatedAt)
+                        .ThenByDescending(j => j.Id)
+                        .ThenByDescending(j => j.MailDeadline)
+                        .Skip(specification.Skip)
+                        .Take(specification.Take);
 
                     jobs = await query.ToListAsync(cancellationToken);
                 }
