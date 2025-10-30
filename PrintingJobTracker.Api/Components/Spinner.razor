@@ -1,0 +1,22 @@
+﻿<div class="text-center py-5" style="@GetVisibility()">
+    <div class="spinner-border @SpinnerColor" role="status" style="@SizeStyle">
+        <span class="visually-hidden">@DisplayText</span>
+    </div>
+    @if (!string.IsNullOrEmpty(DisplayText))
+    {
+        <p class="mt-3 text-muted">@DisplayText</p>
+    }
+</div>
+
+@code {
+    [Parameter] public bool IsVisible { get; set; } = true;
+
+    [Parameter] public string DisplayText { get; set; } = "Cargando...";
+
+    [Parameter] public string SpinnerColor { get; set; } = "text-primary";
+
+    [Parameter] public string Size { get; set; } = "3rem";
+
+    private string SizeStyle => $"width:{Size}; height:{Size};";
+    private string GetVisibility() => IsVisible ? "display:block;" : "display:none;";
+}
