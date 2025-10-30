@@ -1,0 +1,64 @@
+﻿@page "/notfound"
+@using Microsoft.AspNetCore.Components
+@inject NavigationManager Navigation
+
+<PageTitle>404 - Page Not Found</PageTitle>
+
+<div class="d-flex flex-column justify-content-center align-items-center min-vh-100 bg-light">
+    <div class="text-center p-5">
+        <div class="mb-4">
+            <i class="bi bi-exclamation-circle text-warning" style="font-size: 6rem;"></i>
+        </div>
+
+        <h1 class="display-1 fw-bold text-primary mb-0">404</h1>
+
+        <h2 class="h3 mb-3 text-dark">Page Not Found</h2>
+        <p class="text-muted mb-4 mx-auto" style="max-width: 400px;">
+            Sorry, the page you are looking for does not exist or has been moved.
+        </p>
+
+        <div class="d-flex flex-wrap justify-content-center gap-3 mb-4">
+            <button class="btn btn-primary btn-lg" @onclick="GoHome">
+                <i class="bi bi-house-door-fill me-2"></i>Back to Home
+            </button>
+            <button class="btn btn-outline-secondary btn-lg" @onclick="GoToJobs">
+                <i class="bi bi-briefcase me-2"></i>View Jobs
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .btn-lg {
+        padding: 0.75rem 2rem;
+    }
+
+    a {
+        color: #0d6efd;
+        transition: color 0.2s;
+    }
+
+        a:hover {
+            color: #0a58ca;
+        }
+
+    .btn {
+        transition: transform 0.2s;
+    }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+</style>
+
+@code {
+    private void GoHome()
+    {
+        Navigation.NavigateTo("/");
+    }
+
+    private void GoToJobs()
+    {
+        Navigation.NavigateTo("/jobs");
+    }
+}
