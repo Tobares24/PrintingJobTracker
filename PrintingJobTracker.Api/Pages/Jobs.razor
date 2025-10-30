@@ -1,0 +1,42 @@
+﻿@page "/jobs"
+@using PrintingJobTracker.Api.Components
+@using PrintingJobTracker.Application.Services
+@using PrintingJobTracker.Domain.Entities
+@using PrintingJobTracker.Web.Components
+@inject JobService JobService
+
+<h3>Gestión de Jobs</h3>
+
+<button class="btn btn-primary float-end mb-2" @onclick="OpenCreateJobModal">
+    Crear Job
+</button>
+
+<JobsTable @ref="jobsTable" OnEditJob="OpenEditJobModal" />
+
+<Modal @ref="jobModal">
+    <JobForm @ref="jobForm" OnSaved="OnJobSaved" />
+</Modal>
+
+@code {
+    private JobsTable jobsTable = default!;
+    private Modal jobModal = default!;
+    private JobForm jobForm = default!;
+
+    private void OpenCreateJobModal()
+    {
+        jobForm.SetJob(new Job()); 
+        jobModal.Show();
+    }
+
+    private void OpenEditJobModal(Job job)
+    {
+        jobForm.SetJob(job);
+        jobModal.Show();
+    }
+
+    private async Task OnJobSaved()
+    {
+        jobModal.Hide();
+        await jobsTable.RefreshAsync();
+    }
+}

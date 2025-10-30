@@ -1,5 +1,6 @@
 using PrintingJobTracker.Api.Data;
 using PrintingJobTracker.Api.Extensions;
+using PrintingJobTracker.Application.Hubs;
 using PrintingJobTracker.Infrastructure;
 using PrintingJobTracker.Infrastructure.Services;
 
@@ -34,6 +35,7 @@ app.UseRouting();
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
+app.MapHub<AppHub>("/hub/app");
 
 _ = Task.Run(async () =>
 {

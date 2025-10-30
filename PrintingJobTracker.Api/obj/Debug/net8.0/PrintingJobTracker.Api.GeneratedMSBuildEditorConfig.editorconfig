@@ -24,6 +24,22 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Components/JobForm.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xKb2JGb3JtLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Components/JobsTable.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xKb2JzVGFibGUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Components/Pagination.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdpbmF0aW9uLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Components/SelectorClient.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTZWxlY3RvckNsaWVudC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Pages/Counter.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ291bnRlci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
@@ -34,6 +50,14 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Pages/Index.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kZXgucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Pages/Jobs.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSm9icy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Shared/Modal.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE1vZGFsLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Shared/SurveyPrompt.razor]
