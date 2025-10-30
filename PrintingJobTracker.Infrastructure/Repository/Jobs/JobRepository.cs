@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PrintingJobTracker.Domain.Entities;
+using PrintingJobTracker.Domain.Specifications;
 using PrintingJobTracker.Infrastructure.Persistence;
 using System.Reflection;
 
@@ -12,6 +13,47 @@ namespace PrintingJobTracker.Infrastructure.Repository.Jobs
     {
         private readonly ILogger<JobRepository> _logger = logger;
         private readonly DbContextFactoryService _dbContextFactoryService = dbContextFactoryService;
+
+        public async Task<List<Job>> GetJobsAsync(
+            string traceId,
+            ISpecification<Job> specification,
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                _logger.LogInformation("{TraceId} - Start fetching jobs with specification", traceId);
+
+                List<Job> jobs = [];
+                using (var dbContext = _dbContextFactoryService.CreateDbContext<ApplicationDbContext>())
+                {
+                    IQueryable<Job> query = dbContext.Jobs
+                      .AsNoTracking()
+                      .Where(j => !j.IsDeleted)
+                      .OrderByDescending(j => j.MailDeadline)
+                        .ThenByDescending(j => j.CreatedAt)
+                      .Skip(specification.Skip)
+                      .Take(specification.Take);
+
+                    if (specification.Criteria is not null)
+                    {
+                        query = query.Where(specification.Criteria);
+                    }
+
+                    jobs = await query.ToListAsync(cancellationToken);
+                }
+
+                return jobs;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{TraceId} - Error fetching jobs: {Exception}", traceId, ex.Message);
+                throw;
+            }
+            finally
+            {
+                _logger.LogInformation("{TraceId} - End fetching jobs", traceId);
+            }
+        }
 
         public async Task<bool> ExistsAsync(string traceId, Guid jobId, CancellationToken cancellationToken = default)
         {

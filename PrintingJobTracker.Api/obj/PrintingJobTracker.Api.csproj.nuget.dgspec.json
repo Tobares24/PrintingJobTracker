@@ -109,7 +109,14 @@
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
-            "projectReferences": {}
+            "projectReferences": {
+              "C:\\Users\\steve\\source\\repos\\PrintingJobTracker\\PrintingJobTracker.Domain\\PrintingJobTracker.Domain.csproj": {
+                "projectPath": "C:\\Users\\steve\\source\\repos\\PrintingJobTracker\\PrintingJobTracker.Domain\\PrintingJobTracker.Domain.csproj"
+              },
+              "C:\\Users\\steve\\source\\repos\\PrintingJobTracker\\PrintingJobTracker.Infrastructure\\PrintingJobTracker.Infrastructure.csproj": {
+                "projectPath": "C:\\Users\\steve\\source\\repos\\PrintingJobTracker\\PrintingJobTracker.Infrastructure\\PrintingJobTracker.Infrastructure.csproj"
+              }
+            }
           }
         },
         "warningProperties": {
@@ -127,6 +134,12 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.AspNetCore.SignalR.Core": {
+              "target": "Package",
+              "version": "[1.2.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
