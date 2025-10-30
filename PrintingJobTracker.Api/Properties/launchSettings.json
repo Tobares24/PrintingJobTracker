@@ -19,12 +19,7 @@
         "TAMANO_SQL_POOL": "10",
         "INIT_SEED_CLIENTS": "1",
         "INIT_SEED_JOBS": "1",
-        "INIT_SEED_JOBSTATUS": "1",
-        "JWT_SECRET": "MySuperSecretKeyForJWTToken123!",
-        "JWT_ISSUER": "PrintingJobTracker",
-        "JWT_AUDIENCE": "PrintingJobTrackerClient",
-        "JWT_ACCESS_TOKEN_EXP_MINUTES": "15",
-        "JWT_REFRESH_TOKEN_EXP_DAYS": "7"
+        "INIT_SEED_JOBSTATUS": "1"
       }
     }
   },
