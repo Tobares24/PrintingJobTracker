@@ -1,11 +1,19 @@
 is_global = true
 build_property.TargetFramework = net8.0
+build_property.TargetFramework = net8.0
+build_property.TargetPlatformMinVersion = 
 build_property.TargetPlatformMinVersion = 
 build_property.UsingMicrosoftNETSdkWeb = true
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
 build_property.ProjectTypeGuids = 
 build_property.InvariantGlobalization = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
 build_property.PlatformNeutralAssembly = 
 build_property.EnforceExtendedAnalyzerRules = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = PrintingJobTracker.Api
 build_property.RootNamespace = PrintingJobTracker.Api
@@ -24,28 +32,24 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Components/JobForm.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xKb2JGb3JtLnJhem9y
+[C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Components/Alert.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBbGVydC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Components/JobsTable.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xKb2JzVGFibGUucmF6b3I=
+[C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Components/ClientSelector.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xDbGllbnRTZWxlY3Rvci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Components/Pagination.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdpbmF0aW9uLnJhem9y
+[C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Components/JobDetail.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xKb2JEZXRhaWwucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Components/SelectorClient.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTZWxlY3RvckNsaWVudC5yYXpvcg==
+[C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Components/JobHistoryComponent.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xKb2JIaXN0b3J5Q29tcG9uZW50LnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Pages/Counter.razor]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ291bnRlci5yYXpvcg==
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Pages/FetchData.razor]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRmV0Y2hEYXRhLnJhem9y
+[C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Components/Spinner.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTcGlubmVyLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/steve/source/repos/PrintingJobTracker/PrintingJobTracker.Api/Pages/Index.razor]

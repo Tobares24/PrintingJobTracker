@@ -18,6 +18,9 @@
     public bool IsVisible { get; set; }
 
     [Parameter]
+    public EventCallback<bool> IsVisibleChanged { get; set; }
+
+    [Parameter]
     public string Title { get; set; } = "Modal";
 
     [Parameter]
@@ -29,17 +32,39 @@
     [Parameter]
     public bool CloseOnBackdropClick { get; set; } = true;
 
+    protected override void OnParametersSet()
+    {
+        Console.WriteLine($"Modal OnParametersSet - IsVisible: {IsVisible}");
+        base.OnParametersSet();
+    }
+
+    public async Task Show()
+    {
+        Console.WriteLine("Modal Show called");
+        IsVisible = true;
+        await IsVisibleChanged.InvokeAsync(IsVisible);
+        StateHasChanged();
+    }
+
+    public async Task Hide()
+    {
+        Console.WriteLine("Modal Hide called");
+        IsVisible = false;
+        await IsVisibleChanged.InvokeAsync(IsVisible);
+        await OnClose.InvokeAsync();
+        StateHasChanged();
+    }
+
     private async Task Close()
     {
-        IsVisible = false;
-        await OnClose.InvokeAsync();
+        await Hide();
     }
 
     private async Task OnBackdropClick()
     {
         if (CloseOnBackdropClick)
         {
-            await Close();
+            await Hide();
         }
     }
 }
@@ -76,11 +101,11 @@
         border-bottom: 1px solid #e0e0e0;
     }
 
-    .modal-header h3 {
-        margin: 0;
-        font-size: 1.5rem;
-        color: #333;
-    }
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #333;
+        }
 
     .modal-close {
         background: none;
@@ -94,9 +119,9 @@
         height: 30px;
     }
 
-    .modal-close:hover {
-        color: #333;
-    }
+        .modal-close:hover {
+            color: #333;
+        }
 
     .modal-body {
         padding: 1.5rem;

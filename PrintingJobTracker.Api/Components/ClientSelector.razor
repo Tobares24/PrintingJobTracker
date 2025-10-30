@@ -1,0 +1,65 @@
+﻿@using PrintingJobTracker.Application.DTOs
+@using PrintingJobTracker.Application.Interfaces
+
+<InputText placeholder="Buscar cliente..."
+           @bind-Value="SearchTerm"
+           @oninput="OnSearchInput"
+           class="form-control mb-2" />
+
+<select class="form-select" value="@SelectedClientId" @onchange="OnSelectedClientChanged">
+    <option value="0">-- Selecciona un cliente --</option>
+    @foreach (var client in Clients)
+    {
+        <option value="@client.Id">@client.Name</option>
+    }
+</select>
+
+@code {
+    [Inject] private IClientService ClientService { get; set; } = null!;
+
+    [Parameter] public int SelectedClientId { get; set; }
+    [Parameter] public EventCallback<int> SelectedClientIdChanged { get; set; }
+
+    private string? SearchTerm { get; set; }
+    private List<ClientResponse> Clients { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadClientsAsync();
+    }
+
+    private async Task OnSearchInput(ChangeEventArgs e)
+    {
+        SearchTerm = e.Value?.ToString();
+        await LoadClientsAsync();
+    }
+
+    private async Task LoadClientsAsync()
+    {
+        string traceId = Guid.NewGuid().ToString();
+        var filter = new ClientFilterRequest
+        {
+            SearchTerm = SearchTerm ?? string.Empty
+        };
+
+        Clients = await ClientService.GetClientsAsync(traceId, filter);
+
+        if (SelectedClientId > 0 && !Clients.Any(c => c.Id == SelectedClientId))
+        {
+            var current = Clients.FirstOrDefault(c => c.Id == SelectedClientId);
+            if (current is not null)
+                Clients.Insert(0, current);
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task OnSelectedClientChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var id))
+        {
+            SelectedClientId = id;
+            await SelectedClientIdChanged.InvokeAsync(id);
+        }
+    }
+}
