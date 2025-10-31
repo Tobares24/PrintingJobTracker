@@ -1,0 +1,40 @@
+﻿@if (Show)
+{
+    <div class="position-fixed top-0 start-50 translate-middle-x mt-3" style="z-index: 1200;">
+        <div class="alert alert-@Type alert-dismissible fade show" role="alert">
+            @Message
+            <button type="button" class="btn-close" @onclick="Hide"></button>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool Show { get; set; }
+    [Parameter] public EventCallback<bool> ShowChanged { get; set; }
+
+    [Parameter] public string Message { get; set; } = "";
+    [Parameter] public string Type { get; set; } = "danger";
+
+    public async Task ShowAlert(string message, string type = "danger", int autoHideMs = 0)
+    {
+        Message = message;
+        Type = type;
+        Show = true;
+        await ShowChanged.InvokeAsync(true);
+
+        StateHasChanged();
+
+        if (autoHideMs > 0)
+        {
+            await Task.Delay(autoHideMs);
+            await Hide();
+        }
+    }
+
+    private async Task Hide()
+    {
+        Show = false;
+        await ShowChanged.InvokeAsync(false);
+        StateHasChanged();
+    }
+}

@@ -1,0 +1,45 @@
+@page "/jobs"
+@using PrintingJobTracker.Application.Services
+@using PrintingJobTracker.Api.Shared
+@inject NavigationManager NavigationManager
+
+<PageTitle>Jobs</PageTitle>
+
+<h3 class="d-flex justify-content-between align-items-center">
+    <span>Gestión de Jobs</span>
+</h3>
+
+<div class="mb-3">
+    <JobsTable @ref="jobsTable"
+               OnEdit="OpenEdit"
+               OnCreate="OpenCreate" />
+</div>
+
+<Modal @ref="modal">
+    <JobForm @ref="jobForm"
+             OnValidSubmit="HandleSaved" />
+</Modal>
+
+@code {
+    private JobsTable? jobsTable;
+    private Modal? modal;
+    private JobForm? jobForm;
+
+    private void OpenCreate()
+    {
+        jobForm!.InitializeForCreate();
+        modal!.Show();
+    }
+
+    private void OpenEdit(Job job)
+    {
+        jobForm!.InitializeForEdit(job);
+        modal!.Show();
+    }
+
+    private async Task HandleSaved(Job job)
+    {
+        modal!.Hide();
+        await jobsTable!.ReloadAsync();
+    }
+}

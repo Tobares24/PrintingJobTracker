@@ -1,0 +1,79 @@
+@using System.ComponentModel.DataAnnotations
+@using PrintingJobTracker.Application.Services
+@inject JobService JobService
+
+<EditForm Model="model" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label class="form-label">JobName</label>
+        <InputText class="form-control" @bind-Value="model.JobName" />
+        <ValidationMessage For="() => model.JobName" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">MailDeadline</label>
+        <InputDate class="form-control" @bind-Value="model.MailDeadline" />
+        <ValidationMessage For="() => model.MailDeadline" />
+    </div>
+
+    <div class="d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </div>
+</EditForm>
+
+@code {
+    private JobModel model = new();
+
+    public void InitializeForCreate()
+    {
+        model = new JobModel();
+    }
+
+    public void InitializeForEdit(Job job)
+    {
+        model = new JobModel
+        {
+            Id = job.Id,
+            JobName = job.JobName,
+            MailDeadline = job.MailDeadline
+        };
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (model.Id == Guid.Empty)
+        {
+            var created = new Job { Id = Guid.NewGuid(), JobName = model.JobName!, MailDeadline = model.MailDeadline };
+            await JobService.AddJobAsync(created);
+            await OnValidSubmit.InvokeAsync(created);
+        }
+        else
+        {
+            var updated = new Job { Id = model.Id, JobName = model.JobName!, MailDeadline = model.MailDeadline };
+            await JobService.UpdateJobAsync(updated);
+            await OnValidSubmit.InvokeAsync(updated);
+        }
+    }
+
+    private void Cancel()
+    {
+        _ = OnCancel.InvokeAsync();
+    }
+
+    [Parameter] public EventCallback<Job> OnValidSubmit { get; set; }
+    [Parameter] public EventCallback OnCancel { get; set; }
+
+    public class JobModel
+    {
+        public Guid Id { get; set; }
+
+        [Required]
+        public string? JobName { get; set; }
+
+        [Required]
+        public DateTime MailDeadline { get; set; } = DateTime.Today;
+    }
+}

@@ -1,17 +1,14 @@
 ﻿@inherits LayoutComponentBase
+@attribute [Authorize]
 
-<PageTitle>PrintingJobTracker.Api</PageTitle>
+<PageTitle>Job Tracker</PageTitle>
 
 <div class="page">
-    <div class="sidebar">
+    <div class="d-flex flex-column flex-shrink-0 bg-light">
         <NavMenu />
     </div>
 
     <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
-
         <article class="content px-4">
             @Body
         </article>

@@ -1,0 +1,414 @@
+﻿@page "/jobs"
+@using PrintingJobTracker.Api.Components
+@using PrintingJobTracker.Application.DTOs
+@using PrintingJobTracker.Application.Interfaces
+@using PrintingJobTracker.Domain.Entities.Enums
+@inject IJobService JobService
+@inject NavigationManager Navigation
+
+<Alert @ref="alertComponent" />
+
+<div class="container-fluid mt-4">
+    <div class="row mb-3">
+        <div class="col">
+            <h3 class="text-dark">Printing Job Tracker</h3>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-warning text-dark" @onclick="OpenCreateModal">
+                <i class="bi bi-plus-circle me-1"></i> Create New Job
+            </button>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label class="form-label text-dark">Filter by Status:</label>
+            <select class="form-select" @bind="selectedStatus" @bind:after="ResetAndLoadJobs">
+                <option value="@((int)JobStatus.Received)">Received</option>
+                <option value="@((int)JobStatus.Printing)">Printing</option>
+                <option value="@((int)JobStatus.Inserting)">Inserting</option>
+                <option value="@((int)JobStatus.Mailed)">Mailed</option>
+                <option value="@((int)JobStatus.Delivered)">Delivered</option>
+                <option value="@((int)JobStatus.Exception)">Exception</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label text-dark">Jobs per page:</label>
+            <select class="form-select" @bind="pageSize" @bind:after="ResetAndLoadJobs">
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+        </div>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="text-center p-5">
+            <div class="spinner-border text-warning" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    }
+    else if (jobResponse is null || !jobResponse.Jobs.Any())
+    {
+        <div class="alert alert-warning text-dark">
+            No jobs found. Create your first job to get started!
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Job ID</th>
+                        <th>Client Name</th>
+                        <th>Job Name</th>
+                        <th>Quantity</th>
+                        <th>Carrier</th>
+                        <th>Current Status</th>
+                        <th>Created At</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var job in jobResponse.Jobs)
+                    {
+                        <tr>
+                            <td>@job.Id</td>
+                            <td>@job.ClientName</td>
+                            <td>@job.JobName</td>
+                            <td>@job.Quantity.ToString("N0")</td>
+                            <td>
+                                <span class="badge bg-dark text-warning">@job.Carrier</span>
+                            </td>
+                            <td>
+                                <span class="badge @GetStatusBadgeClass(job.CurrentStatus)">
+                                    @job.CurrentStatus
+                                </span>
+                            </td>
+                            <td>@job.CreatedAt.ToString("MM/dd/yyyy h:MM")</td>
+                            <td>
+                                <button class="btn btn-sm btn-warning text-dark" @onclick="() => ViewJobDetail(job.Id)">
+                                    <i class="bi bi-eye me-1"></i> View
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <p class="text-dark">
+                    Showing @((currentPage - 1) * pageSize + 1) to @Math.Min(currentPage * pageSize, jobResponse.TotalCount)
+                    of @jobResponse.TotalCount jobs
+                </p>
+            </div>
+            <div class="col-md-6">
+                <nav aria-label="Job pagination">
+                    <ul class="pagination justify-content-end">
+                        <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                            <button class="page-link bg-warning text-dark border-dark"
+                                    @onclick="() => GoToPage(1)"
+                                    disabled="@(currentPage == 1)">
+                                First
+                            </button>
+                        </li>
+                        <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                            <button class="page-link bg-warning text-dark border-dark"
+                                    @onclick="PreviousPage"
+                                    disabled="@(currentPage == 1)">
+                                Previous
+                            </button>
+                        </li>
+
+                        @for (int i = Math.Max(1, currentPage - 2); i <= Math.Min(totalPages, currentPage + 2); i++)
+                        {
+                            <li class="page-item @(currentPage == i ? "active" : "")">
+                                <button class="page-link @(currentPage == i ? "bg-dark text-warning border-dark" : "bg-warning text-dark border-dark")"
+                                        @onclick="() => GoToPage(i)">
+                                    @i
+                                </button>
+                            </li>
+                        }
+
+                        <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                            <button class="page-link bg-warning text-dark border-dark"
+                                    @onclick="NextPage"
+                                    disabled="@(currentPage == totalPages)">
+                                Next
+                            </button>
+                        </li>
+                        <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                            <button class="page-link bg-warning text-dark border-dark"
+                                    @onclick="() => GoToPage(totalPages)"
+                                    disabled="@(currentPage == totalPages)">
+                                Last
+                            </button>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    }
+</div>
+
+@if (showCreateModal)
+{
+    <div class="modal-backdrop show" @onclick="CloseCreateModal"></div>
+    <div class="modal show d-block" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create New Printing Job</h5>
+                    <button type="button" class="btn-close" @onclick="CloseCreateModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Cliente</label>
+                        <ClientSelector SelectedClientId="@clientId" SelectedClientIdChanged="@(id => { clientId = id; errorClient = string.Empty; })" />
+                        @if (!string.IsNullOrEmpty(errorClient))
+                        {
+                            <div class="text-danger small mt-1">@errorClient</div>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Job Name</label>
+                        <input type="text" class="form-control" @bind="jobName" @oninput="@(_ => errorJobName = string.Empty)" />
+                        @if (!string.IsNullOrEmpty(errorJobName))
+                        {
+                            <div class="text-danger small mt-1">@errorJobName</div>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Quantity</label>
+                        <input type="number" class="form-control" @bind="quantity" @bind:after="() => errorQuantity = string.Empty" />
+                        @if (!string.IsNullOrEmpty(errorQuantity))
+                        {
+                            <div class="text-danger small mt-1">@errorQuantity</div>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Carrier</label>
+                        <select class="form-select" @bind="carrier" @bind:after="() => errorCarrier = string.Empty">
+                            <option value="">Select a carrier...</option>
+                            <option value="@((int)CarrierType.USPS)">USPS</option>
+                            <option value="@((int)CarrierType.UPS)">UPS</option>
+                            <option value="@((int)CarrierType.FedEx)">FedEx</option>
+                        </select>
+                        @if (!string.IsNullOrEmpty(errorCarrier))
+                        {
+                            <div class="text-danger small mt-1">@errorCarrier</div>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">SLA Mail By Date</label>
+                        <input type="date" class="form-control" @bind="mailDeadline" @oninput="@(_ => errorMailDeadline = string.Empty)" />
+                        @if (!string.IsNullOrEmpty(errorMailDeadline))
+                        {
+                            <div class="text-danger small mt-1">@errorMailDeadline</div>
+                        }
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @onclick="CloseCreateModal">Cancel</button>
+                        <button type="button" class="btn btn-primary" @onclick="CreateJob">Create Job</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@code {
+    private Alert? alertComponent;
+    private JobResponse? jobResponse;
+    private int selectedStatus = 0;
+    private bool isLoading = true;
+    private bool showCreateModal = false;
+
+    private int currentPage = 1;
+    private int pageSize = 10;
+    private int totalPages => jobResponse is not null ? (int)Math.Ceiling((double)jobResponse.TotalCount / pageSize) : 1;
+
+    private int clientId;
+    private string jobName = "";
+    private int quantity = 0;
+    private string carrier = "";
+    private DateTime? mailDeadline = DateTime.UtcNow.AddDays(7);
+
+    private string errorClient = "";
+    private string errorJobName = "";
+    private string errorQuantity = "";
+    private string errorCarrier = "";
+    private string errorMailDeadline = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadJobs();
+    }
+
+    private async Task LoadJobs()
+    {
+        isLoading = true;
+
+        var request = new JobFilterRequest(
+            JobName: null,
+            Status: (JobStatus)selectedStatus,
+            Skip: (currentPage - 1) * pageSize,
+            Take: pageSize
+        );
+
+        jobResponse = await JobService.GetJobsAsync(Guid.NewGuid().ToString(), request);
+        isLoading = false;
+    }
+
+    private async Task ResetAndLoadJobs()
+    {
+        currentPage = 1;
+        await LoadJobs();
+    }
+
+    private async Task GoToPage(int page)
+    {
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
+        await LoadJobs();
+    }
+
+    private async Task NextPage()
+    {
+        if (currentPage < totalPages)
+        {
+            currentPage++;
+            await LoadJobs();
+        }
+    }
+
+    private async Task PreviousPage()
+    {
+        if (currentPage > 1)
+        {
+            currentPage--;
+            await LoadJobs();
+        }
+    }
+
+    private void SetForm()
+    {
+        clientId = 0;
+        jobName = "";
+        quantity = 0;
+        carrier = "";
+        mailDeadline = null;
+        errorClient = errorJobName = errorQuantity = errorCarrier = errorMailDeadline = "";
+    }
+
+    private void OpenCreateModal()
+    {
+        SetForm();
+        showCreateModal = true;
+    }
+
+    private void CloseCreateModal()
+    {
+        SetForm();
+        showCreateModal = false;
+    }
+
+    private async Task CreateJob()
+    {
+        bool hasError = false;
+        Console.WriteLine(clientId);
+        if (clientId <= 0)
+        {
+            errorClient = "Debe seleccionar un cliente.";
+            hasError = true;
+        }
+
+        if (string.IsNullOrWhiteSpace(jobName))
+        {
+            errorJobName = "El nombre del job no puede estar vacío.";
+            hasError = true;
+        }
+
+        if (quantity <= 0)
+        {
+            errorQuantity = "La cantidad debe ser mayor que cero.";
+            hasError = true;
+        }
+
+        if (!int.TryParse(carrier, out var carrierInt) || !Enum.IsDefined(typeof(CarrierType), carrierInt))
+        {
+            errorCarrier = "Debe seleccionar un transportista válido.";
+            hasError = true;
+        }
+
+        if (mailDeadline is null)
+        {
+            errorMailDeadline = "Debe seleccionar una fecha.";
+            hasError = true;
+        }
+
+        if (mailDeadline < DateTime.UtcNow.Date)
+        {
+            errorMailDeadline = "La fecha de envío no puede ser menor a la fecha actual.";
+            hasError = true;
+        }
+
+        if (hasError)
+        {
+            return;
+        }
+
+        var request = new CreateJobRequest
+        {
+            ClientId = clientId,
+            JobName = jobName,
+            Quantity = quantity,
+            Carrier = (CarrierType)int.Parse(carrier),
+            MailDeadline = mailDeadline!.Value
+        };
+
+        await JobService.AddJobAsync(Guid.NewGuid().ToString(), request);
+        await alertComponent!.ShowAlert("Job created successfully!", "success");
+        CloseCreateModal();
+        await ResetAndLoadJobs();
+    }
+
+    private void ViewJobDetail(int jobId)
+    {
+        Navigation.NavigateTo($"/jobs/{jobId}");
+    }
+
+    private string GetStatusBadgeClass(JobStatus status)
+    {
+        return status switch
+        {
+            JobStatus.Received => "bg-info",
+            JobStatus.Printing => "bg-primary",
+            JobStatus.Inserting => "bg-warning text-dark",
+            JobStatus.Mailed => "bg-success",
+            JobStatus.Delivered => "bg-dark",
+            JobStatus.Exception => "bg-danger",
+            _ => "bg-secondary"
+        };
+    }
+
+    private string GetSLAClass(DateTime slaDate)
+    {
+        var daysUntilDue = (slaDate - DateTime.UtcNow).Days;
+        if (daysUntilDue < 0) return "text-danger fw-bold";
+        if (daysUntilDue <= 2) return "text-warning fw-bold";
+        return "";
+    }
+}
