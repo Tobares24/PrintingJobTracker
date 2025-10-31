@@ -22,7 +22,8 @@ namespace PrintingJobTracker.Infrastructure
             services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
             {
                 SqlConnection sqlConnection = new();
-                sqlConnection.ConnectionString = Environment.GetEnvironmentVariable("SQL_SERVER_CONNECTION_STRING") ?? "Server=localhost;Database=PrintingJobTracker;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True";
+                sqlConnection.ConnectionString = Environment.GetEnvironmentVariable("SQL_SERVER_CONNECTION_STRING")
+                    ?? "Server=localhost;Database=PrintingJobTracker;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True";
                 options.UseSqlServer(sqlConnection);
             });
 
