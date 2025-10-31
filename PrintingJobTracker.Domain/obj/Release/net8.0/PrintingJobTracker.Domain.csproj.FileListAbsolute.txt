@@ -1,0 +1,12 @@
+C:\Users\steve\source\repos\PrintingJobTracker\PrintingJobTracker.Domain\bin\Release\net8.0\PrintingJobTracker.Domain.deps.json
+C:\Users\steve\source\repos\PrintingJobTracker\PrintingJobTracker.Domain\bin\Release\net8.0\PrintingJobTracker.Domain.dll
+C:\Users\steve\source\repos\PrintingJobTracker\PrintingJobTracker.Domain\bin\Release\net8.0\PrintingJobTracker.Domain.pdb
+C:\Users\steve\source\repos\PrintingJobTracker\PrintingJobTracker.Domain\obj\Release\net8.0\PrintingJobTracker.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\steve\source\repos\PrintingJobTracker\PrintingJobTracker.Domain\obj\Release\net8.0\PrintingJobTracker.Domain.AssemblyInfoInputs.cache
+C:\Users\steve\source\repos\PrintingJobTracker\PrintingJobTracker.Domain\obj\Release\net8.0\PrintingJobTracker.Domain.AssemblyInfo.cs
+C:\Users\steve\source\repos\PrintingJobTracker\PrintingJobTracker.Domain\obj\Release\net8.0\PrintingJobTracker.Domain.csproj.CoreCompileInputs.cache
+C:\Users\steve\source\repos\PrintingJobTracker\PrintingJobTracker.Domain\obj\Release\net8.0\PrintingJobTracker.Domain.sourcelink.json
+C:\Users\steve\source\repos\PrintingJobTracker\PrintingJobTracker.Domain\obj\Release\net8.0\PrintingJobTracker.Domain.dll
+C:\Users\steve\source\repos\PrintingJobTracker\PrintingJobTracker.Domain\obj\Release\net8.0\refint\PrintingJobTracker.Domain.dll
+C:\Users\steve\source\repos\PrintingJobTracker\PrintingJobTracker.Domain\obj\Release\net8.0\PrintingJobTracker.Domain.pdb
+C:\Users\steve\source\repos\PrintingJobTracker\PrintingJobTracker.Domain\obj\Release\net8.0\ref\PrintingJobTracker.Domain.dll

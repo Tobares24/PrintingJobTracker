@@ -15,15 +15,17 @@ namespace PrintingJobTracker.Infrastructure
         {
             services.AddSingleton<DbContextFactoryService>();
             services.AddSingleton<SeedInitializerService>();
+
             services.AddScoped<IJobRepository, JobRepository>();
             services.AddScoped<IClientRepository, ClientRepository>();
             services.AddScoped<IJobStatusHistoryRepository, JobStatusHistoryRepository>();
 
             services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
             {
-                SqlConnection sqlConnection = new();
-                sqlConnection.ConnectionString = Environment.GetEnvironmentVariable("SQL_SERVER_CONNECTION_STRING")
-                    ?? "Server=localhost;Database=PrintingJobTracker;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True";
+                var connectionString = configuration.GetConnectionString("SQL_SERVER_CONNECTION_STRING")
+                                       ?? "Server=localhost;Database=PrintingJobTracker;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True";
+
+                var sqlConnection = new SqlConnection(connectionString);
                 options.UseSqlServer(sqlConnection);
             });
 
