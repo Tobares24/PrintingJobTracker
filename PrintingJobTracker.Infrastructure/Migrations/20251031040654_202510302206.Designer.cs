@@ -12,8 +12,8 @@ using PrintingJobTracker.Infrastructure.Persistence;
 namespace PrintingJobTracker.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251030153239_202530100931")]
-    partial class _202530100931
+    [Migration("20251031040654_202510302206")]
+    partial class _202510302206
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

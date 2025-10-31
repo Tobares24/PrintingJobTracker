@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PrintingJobTracker.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class _202530100931 : Migration
+    public partial class _202510302206 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

@@ -176,5 +176,5 @@ C:\Users\steve\source\repos\PrintingJobTracker\PrintingJobTracker.Api\obj\Debug\
 C:\Users\steve\source\repos\PrintingJobTracker\PrintingJobTracker.Api\obj\Debug\net8.0\PrintingJobTracker.Api.pdb
 C:\Users\steve\source\repos\PrintingJobTracker\PrintingJobTracker.Api\obj\Debug\net8.0\PrintingJobTracker.Api.genruntimeconfig.cache
 C:\Users\steve\source\repos\PrintingJobTracker\PrintingJobTracker.Api\obj\Debug\net8.0\ref\PrintingJobTracker.Api.dll
-C:\Users\steve\source\repos\PrintingJobTracker\PrintingJobTracker.Api\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Users\steve\source\repos\PrintingJobTracker\PrintingJobTracker.Api\bin\Debug\net8.0\Newtonsoft.Json.dll
+C:\Users\steve\source\repos\PrintingJobTracker\PrintingJobTracker.Api\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

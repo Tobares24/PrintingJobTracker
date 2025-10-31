@@ -5,8 +5,7 @@
 @using PrintingJobTracker.Domain.Entities.Enums
 @inject IJobService JobService
 @inject NavigationManager Navigation
-@inject ILogger<JobHistoryComponent> Logger
-@attribute [Authorize]
+@inject ILogger<JobHistory> Logger
 
 <Spinner IsVisible="@isLoading" DisplayText="@spinnerText" SpinnerColor="text-primary" Size="3rem" />
 <Alert @ref="alertComponent" />
